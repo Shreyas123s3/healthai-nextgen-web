@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef } from "react";
@@ -6,6 +5,9 @@ import { motion, useScroll, useTransform, MotionValue, HTMLMotionProps } from "f
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { ChevronRight, Heart, Shield, Zap, Users, ArrowRight, CheckCircle, Brain, Activity, Stethoscope } from "lucide-react";
+import { HealthRiskScanner } from "./health-risk-scanner";
+import { DiagnosticChat } from "./diagnostic-chat";
+import { MedicalUpload } from "./medical-upload";
 
 // Utility function
 const cn = (...classes: (string | undefined)[]) => {
@@ -359,6 +361,15 @@ const HealthcareAILandingPage = () => {
         </ContainerScale>
       </ContainerScroll>
 
+      {/* NEW: Health Risk Scanner */}
+      <HealthRiskScanner />
+
+      {/* NEW: Diagnostic Chat */}
+      <DiagnosticChat />
+
+      {/* NEW: Medical Upload */}
+      <MedicalUpload />
+
       {/* How It Works Section */}
       <section className="py-24 px-6 bg-white/50 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto">
@@ -500,14 +511,14 @@ const HealthcareAILandingPage = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl md:text-6xl font-bold mb-6">
-              Take the intelligent path to health.
+              It's time your healthcare was intelligent.
             </h2>
             <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-2xl mx-auto">
               Join thousands of healthcare professionals already using AI to improve patient outcomes.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <GlowingGradientButton className="text-xl px-12 py-5">
-                Get Started Today <ArrowRight className="w-6 h-6" />
+                Get Started <ArrowRight className="w-6 h-6" />
               </GlowingGradientButton>
               <Button variant="outline" size="lg" className="bg-transparent border-white/30 text-white hover:bg-white/10">
                 Schedule Demo
