@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useState, useRef } from "react";
-import { motion, useScroll, useTransform, MotionValue, HTMLMotionProps } from "framer-motion";
+import React, { useState, useRef, useEffect } from "react";
+import { motion, useScroll, useTransform, MotionValue, HTMLMotionProps, useInView } from "framer-motion";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { ChevronRight, Heart, Shield, Zap, Users, ArrowRight, CheckCircle, Brain, Activity, Stethoscope } from "lucide-react";
@@ -129,6 +129,44 @@ function GetStartedButton() {
         <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
       </i>
     </Button>
+  );
+}
+
+// Enhanced Animation Hook
+function useScrollAnimation() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  return [ref, isInView] as const;
+}
+
+// Animated Section Wrapper
+interface AnimatedSectionProps {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: 'up' | 'left' | 'right' | 'zoom';
+}
+
+function AnimatedSection({ children, className = "", delay = 0, direction = 'up' }: AnimatedSectionProps) {
+  const [ref, isInView] = useScrollAnimation();
+  
+  const variants = {
+    up: { y: 30, opacity: 0 },
+    left: { x: -30, opacity: 0 },
+    right: { x: 30, opacity: 0 },
+    zoom: { scale: 0.9, opacity: 0 }
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={variants[direction]}
+      animate={isInView ? { x: 0, y: 0, scale: 1, opacity: 1 } : variants[direction]}
+      transition={{ duration: 0.8, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
   );
 }
 
@@ -312,9 +350,12 @@ const HealthcareAILandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 text-slate-900">
-      {/* Hero Section with Scroll Animation */}
-      <ContainerScroll className="h-[400vh]">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 text-slate-900 relative">
+      {/* Enhanced dotted background overlay */}
+      <div className="fixed inset-0 opacity-30 parallax-dots pointer-events-none z-0" />
+      
+      {/* Hero Section with Enhanced Scroll Animation */}
+      <ContainerScroll className="h-[400vh] relative z-10">
         <BentoGrid
           variant="fourCells"
           className="sticky left-0 top-0 h-screen w-full p-4"
@@ -341,152 +382,155 @@ const HealthcareAILandingPage = () => {
             transition={{ duration: 0.8 }}
             className="max-w-4xl mx-auto px-6"
           >
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent"
+            >
               AI for Healthcare.
               <br />
               <span className="text-slate-800">Smarter Starts Here.</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-xl md:text-2xl text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed"
+            >
               Experience health like never before — powered by intelligent design and cutting-edge AI technology.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <GlowingGradientButton>
+            </motion.p>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            >
+              <GlowingGradientButton className="animate-glow">
                 Try It Now <ArrowRight className="w-5 h-5" />
               </GlowingGradientButton>
-              <Button variant="outline" size="lg" className="bg-white/80 backdrop-blur-sm border-white/30">
+              <Button variant="outline" size="lg" className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
                 Watch Demo
               </Button>
-            </div>
+            </motion.div>
           </motion.div>
         </ContainerScale>
       </ContainerScroll>
 
-      {/* NEW: Health Risk Scanner */}
-      <HealthRiskScanner />
+      {/* Enhanced Health Risk Scanner */}
+      <div className="relative z-10 dotted-bg-enhanced">
+        <HealthRiskScanner />
+      </div>
 
-      {/* NEW: Diagnostic Chat */}
-      <DiagnosticChat />
+      {/* Enhanced Diagnostic Chat */}
+      <div className="relative z-10">
+        <DiagnosticChat />
+      </div>
 
-      {/* NEW: Medical Upload */}
-      <MedicalUpload />
+      {/* Enhanced Medical Upload */}
+      <div className="relative z-10 dotted-bg-enhanced">
+        <MedicalUpload />
+      </div>
 
-      {/* How It Works Section */}
-      <section className="py-24 px-6 bg-white/50 backdrop-blur-sm">
+      {/* Enhanced How It Works Section */}
+      <section className="py-24 px-6 bg-white/50 backdrop-blur-sm relative z-10">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
+          <AnimatedSection className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
               How It Works
             </h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
               Three simple steps to transform your healthcare experience
             </p>
-          </motion.div>
+          </AnimatedSection>
 
           <div className="grid md:grid-cols-3 gap-8">
             {steps.map((step, index) => (
-              <motion.div
+              <AnimatedSection
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                whileHover={{ scale: 1.05, y: -10 }}
+                delay={index * 0.2}
+                direction="zoom"
                 className="group"
               >
-                <Card className="p-8 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-cyan-50">
-                  <div className="text-6xl font-bold text-blue-200 mb-4 group-hover:text-blue-300 transition-colors">
-                    {step.number}
-                  </div>
-                  <h3 className="text-2xl font-semibold mb-4 text-slate-800">
-                    {step.title}
-                  </h3>
-                  <p className="text-slate-600 leading-relaxed">
-                    {step.description}
-                  </p>
-                </Card>
-              </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="h-full"
+                >
+                  <Card className="p-8 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-cyan-50">
+                    <div className="text-6xl font-bold text-blue-200 mb-4 group-hover:text-blue-300 transition-colors">
+                      {step.number}
+                    </div>
+                    <h3 className="text-2xl font-semibold mb-4 text-slate-800">
+                      {step.title}
+                    </h3>
+                    <p className="text-slate-600 leading-relaxed">
+                      {step.description}
+                    </p>
+                  </Card>
+                </motion.div>
+              </AnimatedSection>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-24 px-6 bg-gradient-to-br from-blue-50 to-cyan-50">
+      {/* Enhanced Features Section */}
+      <section className="py-24 px-6 bg-gradient-to-br from-blue-50 to-cyan-50 relative z-10 dotted-bg-enhanced">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
+          <AnimatedSection className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-800">
               Why It's Different
             </h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
               Advanced AI capabilities designed specifically for healthcare professionals and patients
             </p>
-          </motion.div>
+          </AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <motion.div
+              <AnimatedSection
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ scale: 1.05 }}
+                delay={index * 0.1}
+                direction={index % 2 === 0 ? 'left' : 'right'}
                 className="group"
               >
-                <Card className="p-6 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:bg-white">
-                  <div className="text-blue-500 mb-4 group-hover:text-blue-600 transition-colors">
-                    {feature.icon}
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3 text-slate-800">
-                    {feature.title}
-                  </h3>
-                  <p className="text-slate-600 text-sm leading-relaxed">
-                    {feature.description}
-                  </p>
-                </Card>
-              </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                  className="h-full"
+                >
+                  <Card className="p-6 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:bg-white">
+                    <div className="text-blue-500 mb-4 group-hover:text-blue-600 transition-colors">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-xl font-semibold mb-3 text-slate-800">
+                      {feature.title}
+                    </h3>
+                    <p className="text-slate-600 text-sm leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </Card>
+                </motion.div>
+              </AnimatedSection>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Screenshot/Visual Section */}
-      <section className="py-24 px-6 bg-white/50 backdrop-blur-sm">
+      {/* Enhanced Screenshot/Visual Section */}
+      <section className="py-24 px-6 bg-white/50 backdrop-blur-sm relative z-10">
         <div className="max-w-6xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="mb-12"
-          >
+          <AnimatedSection className="mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-800">
               See It In Action
             </h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
               Experience the future of healthcare with our intuitive, AI-powered interface
             </p>
-          </motion.div>
+          </AnimatedSection>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="relative max-w-4xl mx-auto"
-          >
+          <AnimatedSection delay={0.2} direction="zoom" className="relative max-w-4xl mx-auto">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-100 to-cyan-100 p-8">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm" />
               <div className="relative z-10">
@@ -497,19 +541,14 @@ const HealthcareAILandingPage = () => {
                 />
               </div>
             </div>
-          </motion.div>
+          </AnimatedSection>
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="py-24 px-6 bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 text-white">
+      {/* Enhanced Final CTA Section */}
+      <section className="py-24 px-6 bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 text-white relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
+          <AnimatedSection>
             <h2 className="text-4xl md:text-6xl font-bold mb-6">
               It's time your healthcare was intelligent.
             </h2>
@@ -517,23 +556,30 @@ const HealthcareAILandingPage = () => {
               Join thousands of healthcare professionals already using AI to improve patient outcomes.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <GlowingGradientButton className="text-xl px-12 py-5">
-                Get Started <ArrowRight className="w-6 h-6" />
-              </GlowingGradientButton>
-              <Button variant="outline" size="lg" className="bg-transparent border-white/30 text-white hover:bg-white/10">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+              >
+                <GlowingGradientButton className="text-xl px-12 py-5 animate-glow">
+                  Get Started <ArrowRight className="w-6 h-6" />
+                </GlowingGradientButton>
+              </motion.div>
+              <Button variant="outline" size="lg" className="bg-transparent border-white/30 text-white hover:bg-white/10 transition-all duration-300">
                 Schedule Demo
               </Button>
             </div>
-          </motion.div>
+          </AnimatedSection>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-slate-900 text-slate-400">
+      <footer className="py-12 px-6 bg-slate-900 text-slate-400 relative z-10">
         <div className="max-w-6xl mx-auto text-center">
-          <p className="text-sm">
-            © 2024 HealthAI. Transforming healthcare through intelligent technology.
-          </p>
+          <AnimatedSection>
+            <p className="text-sm">
+              © 2024 HealthAI. Transforming healthcare through intelligent technology.
+            </p>
+          </AnimatedSection>
         </div>
       </footer>
     </div>
