@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from "react";
@@ -10,7 +9,7 @@ import { HealthRiskScanner } from "./health-risk-scanner";
 import { DiagnosticChat } from "./diagnostic-chat";
 import { MedicalUpload } from "./medical-upload";
 import { FloatingElements } from "./floating-elements";
-import { InteractiveTestimonials } from "./interactive-testimonials";
+import { HealthcareTestimonials } from "./testimonials-columns-1";
 import { AnimatedCounter } from "./animated-counter";
 import { MagneticButton } from "./magnetic-button";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -496,10 +495,8 @@ const HealthcareAILandingPage = () => {
         <MedicalUpload />
       </AnimatedSection>
 
-      {/* Interactive Testimonials with enhanced entrance */}
-      <AnimatedSection direction="zoom" delay={0.2}>
-        <InteractiveTestimonials />
-      </AnimatedSection>
+      {/* New Healthcare Testimonials with animated columns */}
+      <HealthcareTestimonials />
 
       {/* Enhanced How It Works Section with staggered card animations */}
       <section className="py-24 px-6 bg-white/50 backdrop-blur-sm relative z-10 overflow-hidden">
