@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from "react";
@@ -144,22 +145,24 @@ function useScrollAnimationOld() {
   return [ref, isInView] as const;
 }
 
-// Animated Section Wrapper
+// Animated Section Wrapper with enhanced effects
 interface AnimatedSectionProps {
   children: React.ReactNode;
   className?: string;
   delay?: number;
-  direction?: 'up' | 'left' | 'right' | 'zoom';
+  direction?: 'up' | 'left' | 'right' | 'zoom' | 'slideInLeft' | 'slideInRight';
 }
 
 function AnimatedSection({ children, className = "", delay = 0, direction = 'up' }: AnimatedSectionProps) {
   const [ref, isInView] = useScrollAnimationOld();
   
   const variants = {
-    up: { y: 30, opacity: 0 },
-    left: { x: -30, opacity: 0 },
-    right: { x: 30, opacity: 0 },
-    zoom: { scale: 0.9, opacity: 0 }
+    up: { y: 60, opacity: 0 },
+    left: { x: -60, opacity: 0 },
+    right: { x: 60, opacity: 0 },
+    zoom: { scale: 0.8, opacity: 0 },
+    slideInLeft: { x: -100, opacity: 0 },
+    slideInRight: { x: 100, opacity: 0 }
   };
 
   return (
@@ -167,7 +170,13 @@ function AnimatedSection({ children, className = "", delay = 0, direction = 'up'
       ref={ref}
       initial={variants[direction]}
       animate={isInView ? { x: 0, y: 0, scale: 1, opacity: 1 } : variants[direction]}
-      transition={{ duration: 0.8, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ 
+        duration: 0.8, 
+        delay, 
+        ease: [0.25, 0.46, 0.45, 0.94],
+        type: "spring",
+        stiffness: 60
+      }}
       className={className}
     >
       {children}
@@ -310,7 +319,7 @@ const HealthcareAILandingPage = () => {
     "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?q=80&w=2340&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?q=80&w=2340&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1582750433449-648ed127bb54?q=80&w=2340&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?q=80&w=2340&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?q=80&w=2340&auto=format&fit=crop", // New healthcare technology image
   ];
 
   const features = [
@@ -429,22 +438,25 @@ const HealthcareAILandingPage = () => {
         </ContainerScale>
       </ContainerScroll>
 
-      {/* Stats Section - NEW */}
-      <section className="py-16 px-6 bg-white/50 backdrop-blur-sm relative z-10">
+      {/* Enhanced Stats Section with Studio909-style animations */}
+      <section className="py-16 px-6 bg-white/50 backdrop-blur-sm relative z-10 overflow-hidden">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <motion.div
+              <AnimatedSection
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
+                direction="up"
+                delay={index * 0.1}
                 className="text-center group"
               >
                 <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="mb-2"
+                  whileHover={{ 
+                    scale: 1.1,
+                    rotateY: 10,
+                    rotateX: 5
+                  }}
+                  transition={{ duration: 0.3 }}
+                  className="mb-2 transform-gpu"
                 >
                   <AnimatedCounter
                     end={stat.number}
@@ -455,35 +467,44 @@ const HealthcareAILandingPage = () => {
                 <p className="text-slate-600 font-medium group-hover:text-blue-600 transition-colors">
                   {stat.label}
                 </p>
-              </motion.div>
+              </AnimatedSection>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Enhanced Health Risk Scanner with floating elements */}
-      <div className="relative z-10 dotted-bg-enhanced">
+      {/* Enhanced Health Risk Scanner with more dynamic effects */}
+      <div className="relative z-10 dotted-bg-enhanced overflow-hidden">
         <FloatingElements />
-        <HealthRiskScanner />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          viewport={{ once: true }}
+        >
+          <HealthRiskScanner />
+        </motion.div>
       </div>
 
-      {/* Enhanced Diagnostic Chat */}
-      <div className="relative z-10">
+      {/* Enhanced Diagnostic Chat with slide animations */}
+      <AnimatedSection direction="slideInLeft" className="relative z-10">
         <DiagnosticChat />
-      </div>
+      </AnimatedSection>
 
-      {/* Enhanced Medical Upload */}
-      <div className="relative z-10 dotted-bg-enhanced">
+      {/* Enhanced Medical Upload with slide animations */}
+      <AnimatedSection direction="slideInRight" className="relative z-10 dotted-bg-enhanced">
         <MedicalUpload />
-      </div>
+      </AnimatedSection>
 
-      {/* Interactive Testimonials - NEW */}
-      <InteractiveTestimonials />
+      {/* Interactive Testimonials with enhanced entrance */}
+      <AnimatedSection direction="zoom" delay={0.2}>
+        <InteractiveTestimonials />
+      </AnimatedSection>
 
-      {/* Enhanced How It Works Section */}
-      <section className="py-24 px-6 bg-white/50 backdrop-blur-sm relative z-10">
+      {/* Enhanced How It Works Section with staggered card animations */}
+      <section className="py-24 px-6 bg-white/50 backdrop-blur-sm relative z-10 overflow-hidden">
         <div className="max-w-6xl mx-auto">
-          <AnimatedSection className="text-center mb-16">
+          <AnimatedSection className="text-center mb-16" direction="up">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
               How It Works
             </h2>
@@ -494,24 +515,30 @@ const HealthcareAILandingPage = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {steps.map((step, index) => (
-              <motion.div
+              <AnimatedSection
                 key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                viewport={{ once: true }}
+                direction={index % 2 === 0 ? "slideInLeft" : "slideInRight"}
+                delay={index * 0.2}
                 className="group"
               >
                 <motion.div
-                  whileHover={{ scale: 1.05, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                  className="h-full"
+                  whileHover={{ 
+                    scale: 1.05, 
+                    y: -10,
+                    rotateY: 5,
+                    rotateX: 2
+                  }}
+                  transition={{ duration: 0.4, type: "spring", stiffness: 300 }}
+                  className="h-full transform-gpu"
                 >
-                  <Card className="p-8 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-cyan-50">
+                  <Card className="p-8 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-xl hover:shadow-2xl transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-cyan-50">
                     <motion.div 
                       className="text-6xl font-bold text-blue-200 mb-4 group-hover:text-blue-300 transition-colors"
-                      whileHover={{ rotate: [0, -10, 10, 0] }}
-                      transition={{ duration: 0.5 }}
+                      whileHover={{ 
+                        rotate: [0, -10, 10, 0],
+                        scale: 1.1
+                      }}
+                      transition={{ duration: 0.6 }}
                     >
                       {step.number}
                     </motion.div>
@@ -523,17 +550,17 @@ const HealthcareAILandingPage = () => {
                     </p>
                   </Card>
                 </motion.div>
-              </motion.div>
+              </AnimatedSection>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Enhanced Features Section */}
-      <section className="py-24 px-6 bg-gradient-to-br from-blue-50 to-cyan-50 relative z-10 dotted-bg-enhanced">
+      {/* Enhanced Features Section with dynamic card movements */}
+      <section className="py-24 px-6 bg-gradient-to-br from-blue-50 to-cyan-50 relative z-10 dotted-bg-enhanced overflow-hidden">
         <FloatingElements />
         <div className="max-w-6xl mx-auto relative">
-          <AnimatedSection className="text-center mb-16">
+          <AnimatedSection className="text-center mb-16" direction="zoom">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-800">
               Why It's Different
             </h2>
@@ -544,45 +571,55 @@ const HealthcareAILandingPage = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <motion.div
+              <AnimatedSection
                 key={index}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
+                direction={index % 2 === 0 ? "slideInLeft" : "slideInRight"}
+                delay={index * 0.1}
                 className="group"
               >
                 <motion.div
-                  whileHover={{ scale: 1.05, rotateY: 5 }}
-                  transition={{ duration: 0.3 }}
-                  className="h-full"
+                  whileHover={{ 
+                    scale: 1.08, 
+                    rotateY: 10,
+                    rotateX: 5,
+                    z: 50
+                  }}
+                  transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
+                  className="h-full transform-gpu perspective-1000"
                 >
-                  <Card className="p-6 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:bg-white">
+                  <Card className="p-6 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-lg hover:shadow-2xl transition-all duration-500 group-hover:bg-white relative overflow-hidden">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    />
                     <motion.div 
-                      className="text-blue-500 mb-4 group-hover:text-blue-600 transition-colors"
-                      whileHover={{ scale: 1.2, rotate: 360 }}
-                      transition={{ duration: 0.5 }}
+                      className="text-blue-500 mb-4 group-hover:text-blue-600 transition-colors relative z-10"
+                      whileHover={{ 
+                        scale: 1.3, 
+                        rotate: 360,
+                        y: -5
+                      }}
+                      transition={{ duration: 0.6 }}
                     >
                       {feature.icon}
                     </motion.div>
-                    <h3 className="text-xl font-semibold mb-3 text-slate-800">
+                    <h3 className="text-xl font-semibold mb-3 text-slate-800 relative z-10">
                       {feature.title}
                     </h3>
-                    <p className="text-slate-600 text-sm leading-relaxed">
+                    <p className="text-slate-600 text-sm leading-relaxed relative z-10">
                       {feature.description}
                     </p>
                   </Card>
                 </motion.div>
-              </motion.div>
+              </AnimatedSection>
             ))}
           </div>
         </div>
       </section>
 
       {/* Enhanced Screenshot/Visual Section */}
-      <section className="py-24 px-6 bg-white/50 backdrop-blur-sm relative z-10">
+      <section className="py-24 px-6 bg-white/50 backdrop-blur-sm relative z-10 overflow-hidden">
         <div className="max-w-6xl mx-auto text-center">
-          <AnimatedSection className="mb-12">
+          <AnimatedSection className="mb-12" direction="up">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-800">
               See It In Action
             </h2>
@@ -591,31 +628,31 @@ const HealthcareAILandingPage = () => {
             </p>
           </AnimatedSection>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="relative max-w-4xl mx-auto"
-          >
-            <motion.div 
-              className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-100 to-cyan-100 p-8"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm" />
-              <div className="relative z-10">
-                <motion.img
-                  src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2340&auto=format&fit=crop"
-                  alt="Healthcare AI Dashboard"
-                  className="w-full h-auto rounded-xl shadow-lg"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent rounded-2xl" />
+          <AnimatedSection direction="zoom" delay={0.3}>
+            <motion.div className="relative max-w-4xl mx-auto">
+              <motion.div 
+                className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-100 to-cyan-100 p-8"
+                whileHover={{ 
+                  scale: 1.02,
+                  rotateY: 2,
+                  rotateX: 1
+                }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm" />
+                <div className="relative z-10">
+                  <motion.img
+                    src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2340&auto=format&fit=crop"
+                    alt="Healthcare AI Dashboard"
+                    className="w-full h-auto rounded-xl shadow-lg"
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent rounded-2xl" />
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -623,7 +660,7 @@ const HealthcareAILandingPage = () => {
       <section className="py-24 px-6 bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 text-white relative z-10 overflow-hidden">
         <FloatingElements />
         <div className="max-w-4xl mx-auto text-center relative">
-          <AnimatedSection>
+          <AnimatedSection direction="zoom">
             <motion.h2 
               className="text-4xl md:text-6xl font-bold mb-6"
               whileInView={{ 
@@ -655,21 +692,6 @@ const HealthcareAILandingPage = () => {
           </AnimatedSection>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="py-12 px-6 bg-slate-900 text-slate-400 relative z-10">
-        <div className="max-w-6xl mx-auto text-center">
-          <AnimatedSection>
-            <motion.p 
-              className="text-sm"
-              whileHover={{ color: "#60a5fa" }}
-              transition={{ duration: 0.3 }}
-            >
-              © 2024 HealthAI. Transforming healthcare through intelligent technology.
-            </motion.p>
-          </AnimatedSection>
-        </div>
-      </footer>
     </div>
   );
 };
