@@ -8,11 +8,6 @@ import { ChevronRight, Heart, Shield, Zap, Users, ArrowRight, CheckCircle, Brain
 import { HealthRiskScanner } from "./health-risk-scanner";
 import { DiagnosticChat } from "./diagnostic-chat";
 import { MedicalUpload } from "./medical-upload";
-import { FloatingElements } from "./floating-elements";
-import { InteractiveTestimonials } from "./interactive-testimonials";
-import { AnimatedCounter } from "./animated-counter";
-import { useScrollAnimation, useStaggeredAnimation } from "@/hooks/useScrollAnimation";
-import { MagneticButton } from "./magnetic-button";
 
 // Utility function
 const cn = (...classes: (string | undefined)[]) => {
@@ -88,7 +83,7 @@ const CardContent = React.forwardRef<HTMLDivElement, CardProps>(
 );
 CardContent.displayName = "CardContent";
 
-// Enhanced Glowing Button Component
+// Glowing Button Component
 interface GlowingGradientButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
@@ -101,29 +96,50 @@ function GlowingGradientButton({
   const [isHovered, setIsHovered] = useState(false);
   
   return (
-    <motion.button
+    <button
       className={`relative px-8 py-4 rounded-full text-lg font-semibold text-white cursor-pointer transition-all duration-300 ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ scale: 1.05, y: -2 }}
-      whileTap={{ scale: 0.98 }}
       {...props}
     >
       <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 rounded-full" />
-      <motion.div 
-        className="absolute inset-0.5 bg-gray-900 rounded-full transition-opacity duration-500"
-        animate={{ opacity: isHovered ? 0.7 : 1 }}
+      <div 
+        className={`absolute inset-0.5 bg-gray-900 rounded-full transition-opacity duration-500 ${
+          isHovered ? 'opacity-70' : 'opacity-100'
+        }`} 
       />
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 rounded-full blur-xl transition-opacity duration-500"
-        animate={{ opacity: isHovered ? 1 : 0 }}
+      <div 
+        className={`absolute inset-0 bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 rounded-full blur-xl transition-opacity duration-500 ${
+          isHovered ? 'opacity-100' : 'opacity-0'
+        }`} 
       />
       <span className="relative z-10 flex items-center gap-2">{children}</span>
-    </motion.button>
+    </button>
   );
 }
 
-// Enhanced Animation Components
+// Get Started Button Component
+function GetStartedButton() {
+  return (
+    <Button className="group relative overflow-hidden bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600" size="lg">
+      <span className="mr-8 transition-opacity duration-500 group-hover:opacity-0">
+        Try It Now
+      </span>
+      <i className="absolute right-1 top-1 bottom-1 rounded-sm z-10 grid w-1/4 place-items-center transition-all duration-500 bg-primary-foreground/15 group-hover:w-[calc(100%-0.5rem)] group-active:scale-95">
+        <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+      </i>
+    </Button>
+  );
+}
+
+// Enhanced Animation Hook
+function useScrollAnimation() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  return [ref, isInView] as const;
+}
+
+// Animated Section Wrapper
 interface AnimatedSectionProps {
   children: React.ReactNode;
   className?: string;
@@ -132,68 +148,25 @@ interface AnimatedSectionProps {
 }
 
 function AnimatedSection({ children, className = "", delay = 0, direction = 'up' }: AnimatedSectionProps) {
-  const [ref, isInView] = useScrollAnimation(0.1, true);
+  const [ref, isInView] = useScrollAnimation();
   
   const variants = {
-    up: { y: 50, opacity: 0 },
-    left: { x: -50, opacity: 0 },
-    right: { x: 50, opacity: 0 },
-    zoom: { scale: 0.8, opacity: 0 }
-  };
-
-  const animateVariants = {
-    up: { y: 0, opacity: 1 },
-    left: { x: 0, opacity: 1 },
-    right: { x: 0, opacity: 1 },
-    zoom: { scale: 1, opacity: 1 }
+    up: { y: 30, opacity: 0 },
+    left: { x: -30, opacity: 0 },
+    right: { x: 30, opacity: 0 },
+    zoom: { scale: 0.9, opacity: 0 }
   };
 
   return (
     <motion.div
       ref={ref}
       initial={variants[direction]}
-      animate={isInView ? animateVariants[direction] : variants[direction]}
+      animate={isInView ? { x: 0, y: 0, scale: 1, opacity: 1 } : variants[direction]}
       transition={{ duration: 0.8, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
       className={className}
     >
       {children}
     </motion.div>
-  );
-}
-
-// Staggered Cards Component
-interface StaggeredCardsProps {
-  children: React.ReactNode[];
-  className?: string;
-}
-
-function StaggeredCards({ children, className = "" }: StaggeredCardsProps) {
-  const [ref, isInView] = useScrollAnimation(0.1, true);
-  const [staggeredItems, triggerStagger] = useStaggeredAnimation(0.15);
-
-  useEffect(() => {
-    if (isInView && staggeredItems.length === 0) {
-      triggerStagger(children.length);
-    }
-  }, [isInView, children.length, staggeredItems.length, triggerStagger]);
-
-  return (
-    <div ref={ref} className={className}>
-      {children.map((child, index) => (
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, y: 30, scale: 0.9 }}
-          animate={
-            staggeredItems[index] 
-              ? { opacity: 1, y: 0, scale: 1 } 
-              : { opacity: 0, y: 30, scale: 0.9 }
-          }
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          {child}
-        </motion.div>
-      ))}
-    </div>
   );
 }
 
@@ -376,18 +349,8 @@ const HealthcareAILandingPage = () => {
     }
   ];
 
-  const stats = [
-    { number: 10000, suffix: "+", label: "Healthcare Professionals" },
-    { number: 95, suffix: "%", label: "Diagnostic Accuracy" },
-    { number: 500000, suffix: "+", label: "Patients Helped" },
-    { number: 40, suffix: "%", label: "Faster Diagnosis" }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 text-slate-900 relative overflow-x-hidden">
-      {/* Floating Background Elements */}
-      <FloatingElements />
-      
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 text-slate-900 relative">
       {/* Enhanced dotted background overlay */}
       <div className="fixed inset-0 opacity-30 parallax-dots pointer-events-none z-0" />
       
@@ -400,13 +363,12 @@ const HealthcareAILandingPage = () => {
           {HEALTHCARE_IMAGES.map((imageUrl, index) => (
             <BentoCell
               key={index}
-              className="overflow-hidden rounded-2xl shadow-2xl backdrop-blur-sm bg-white/10 border border-white/20 group"
+              className="overflow-hidden rounded-2xl shadow-2xl backdrop-blur-sm bg-white/10 border border-white/20"
             >
-              <motion.img
-                className="size-full object-cover object-center opacity-80 transition-transform duration-700 group-hover:scale-110"
+              <img
+                className="size-full object-cover object-center opacity-80"
                 src={imageUrl}
                 alt={`Healthcare technology ${index + 1}`}
-                whileHover={{ scale: 1.05 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent" />
             </BentoCell>
@@ -428,14 +390,7 @@ const HealthcareAILandingPage = () => {
             >
               AI for Healthcare.
               <br />
-              <motion.span 
-                className="text-slate-800"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-              >
-                Smarter Starts Here.
-              </motion.span>
+              <span className="text-slate-800">Smarter Starts Here.</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
@@ -451,110 +406,72 @@ const HealthcareAILandingPage = () => {
               transition={{ duration: 0.8, delay: 0.6 }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
-              <MagneticButton className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-4 rounded-full font-semibold shadow-lg">
+              <GlowingGradientButton className="animate-glow">
                 Try It Now <ArrowRight className="w-5 h-5" />
-              </MagneticButton>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" size="lg" className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
-                  Watch Demo
-                </Button>
-              </motion.div>
+              </GlowingGradientButton>
+              <Button variant="outline" size="lg" className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                Watch Demo
+              </Button>
             </motion.div>
           </motion.div>
         </ContainerScale>
       </ContainerScroll>
 
-      {/* Stats Section */}
-      <section className="py-16 px-6 bg-white/50 backdrop-blur-sm relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <AnimatedSection>
-            <StaggeredCards className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {stats.map((stat, index) => (
-                <div key={index} className="text-center">
-                  <motion.div 
-                    className="text-3xl md:text-4xl font-bold text-blue-600 mb-2"
-                    whileHover={{ scale: 1.1 }}
-                  >
-                    <AnimatedCounter 
-                      end={stat.number} 
-                      suffix={stat.suffix}
-                      duration={2.5}
-                    />
-                  </motion.div>
-                  <p className="text-slate-600 text-sm md:text-base">{stat.label}</p>
-                </div>
-              ))}
-            </StaggeredCards>
-          </AnimatedSection>
-        </div>
-      </section>
-
       {/* Enhanced Health Risk Scanner */}
       <div className="relative z-10 dotted-bg-enhanced">
-        <AnimatedSection>
-          <HealthRiskScanner />
-        </AnimatedSection>
+        <HealthRiskScanner />
       </div>
 
       {/* Enhanced Diagnostic Chat */}
       <div className="relative z-10">
-        <AnimatedSection direction="left">
-          <DiagnosticChat />
-        </AnimatedSection>
+        <DiagnosticChat />
       </div>
 
       {/* Enhanced Medical Upload */}
       <div className="relative z-10 dotted-bg-enhanced">
-        <AnimatedSection direction="right">
-          <MedicalUpload />
-        </AnimatedSection>
+        <MedicalUpload />
       </div>
 
       {/* Enhanced How It Works Section */}
       <section className="py-24 px-6 bg-white/50 backdrop-blur-sm relative z-10">
         <div className="max-w-6xl mx-auto">
           <AnimatedSection className="text-center mb-16">
-            <motion.h2 
-              className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent"
-              whileHover={{ scale: 1.05 }}
-            >
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
               How It Works
-            </motion.h2>
+            </h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
               Three simple steps to transform your healthcare experience
             </p>
           </AnimatedSection>
 
-          <StaggeredCards className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {steps.map((step, index) => (
-              <motion.div
+              <AnimatedSection
                 key={index}
-                className="group h-full"
-                whileHover={{ y: -10, scale: 1.02 }}
-                transition={{ duration: 0.3 }}
+                delay={index * 0.2}
+                direction="zoom"
+                className="group"
               >
-                <Card className="p-8 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-xl hover:shadow-2xl transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-cyan-50 relative overflow-hidden">
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-blue-100/20 to-cyan-100/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  />
-                  <div className="relative z-10">
-                    <motion.div 
-                      className="text-6xl font-bold text-blue-200 mb-4 group-hover:text-blue-300 transition-colors duration-300"
-                      whileHover={{ rotate: 5, scale: 1.1 }}
-                    >
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="h-full"
+                >
+                  <Card className="p-8 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-cyan-50">
+                    <div className="text-6xl font-bold text-blue-200 mb-4 group-hover:text-blue-300 transition-colors">
                       {step.number}
-                    </motion.div>
+                    </div>
                     <h3 className="text-2xl font-semibold mb-4 text-slate-800">
                       {step.title}
                     </h3>
                     <p className="text-slate-600 leading-relaxed">
                       {step.description}
                     </p>
-                  </div>
-                </Card>
-              </motion.div>
+                  </Card>
+                </motion.div>
+              </AnimatedSection>
             ))}
-          </StaggeredCards>
+          </div>
         </div>
       </section>
 
@@ -570,55 +487,34 @@ const HealthcareAILandingPage = () => {
             </p>
           </AnimatedSection>
 
-          <StaggeredCards className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <motion.div
+              <AnimatedSection
                 key={index}
-                className="group h-full"
-                whileHover={{ scale: 1.05, rotateY: 5 }}
-                transition={{ duration: 0.3 }}
+                delay={index * 0.1}
+                direction={index % 2 === 0 ? 'left' : 'right'}
+                className="group"
               >
-                <Card className="p-6 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:bg-white relative overflow-hidden">
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  />
-                  <div className="relative z-10">
-                    <motion.div 
-                      className="text-blue-500 mb-4 group-hover:text-blue-600 transition-colors"
-                      whileHover={{ rotate: 360, scale: 1.2 }}
-                      transition={{ duration: 0.5 }}
-                    >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                  className="h-full"
+                >
+                  <Card className="p-6 h-full bg-white/80 backdrop-blur-sm border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:bg-white">
+                    <div className="text-blue-500 mb-4 group-hover:text-blue-600 transition-colors">
                       {feature.icon}
-                    </motion.div>
+                    </div>
                     <h3 className="text-xl font-semibold mb-3 text-slate-800">
                       {feature.title}
                     </h3>
                     <p className="text-slate-600 text-sm leading-relaxed">
                       {feature.description}
                     </p>
-                  </div>
-                </Card>
-              </motion.div>
+                  </Card>
+                </motion.div>
+              </AnimatedSection>
             ))}
-          </StaggeredCards>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-24 px-6 bg-white/50 backdrop-blur-sm relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <AnimatedSection className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-800">
-              Trusted by Healthcare Leaders
-            </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              See what medical professionals are saying about our AI platform
-            </p>
-          </AnimatedSection>
-          
-          <AnimatedSection delay={0.3}>
-            <InteractiveTestimonials />
-          </AnimatedSection>
+          </div>
         </div>
       </section>
 
@@ -635,49 +531,42 @@ const HealthcareAILandingPage = () => {
           </AnimatedSection>
 
           <AnimatedSection delay={0.2} direction="zoom" className="relative max-w-4xl mx-auto">
-            <motion.div 
-              className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-100 to-cyan-100 p-8"
-              whileHover={{ scale: 1.02, rotateX: 2 }}
-              transition={{ duration: 0.5 }}
-            >
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-100 to-cyan-100 p-8">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm" />
               <div className="relative z-10">
-                <motion.img
+                <img
                   src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2340&auto=format&fit=crop"
                   alt="Healthcare AI Dashboard"
                   className="w-full h-auto rounded-xl shadow-lg"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
                 />
               </div>
-            </motion.div>
+            </div>
           </AnimatedSection>
         </div>
       </section>
 
       {/* Enhanced Final CTA Section */}
-      <section className="py-24 px-6 bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 text-white relative z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 animate-pulse" />
-        <div className="max-w-4xl mx-auto text-center relative z-10">
+      <section className="py-24 px-6 bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 text-white relative z-10">
+        <div className="max-w-4xl mx-auto text-center">
           <AnimatedSection>
-            <motion.h2 
-              className="text-4xl md:text-6xl font-bold mb-6"
-              whileHover={{ scale: 1.05 }}
-            >
+            <h2 className="text-4xl md:text-6xl font-bold mb-6">
               It's time your healthcare was intelligent.
-            </motion.h2>
+            </h2>
             <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-2xl mx-auto">
               Join thousands of healthcare professionals already using AI to improve patient outcomes.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <MagneticButton className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-xl px-12 py-5 shadow-2xl">
-                Get Started <ArrowRight className="w-6 h-6" />
-              </MagneticButton>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" size="lg" className="bg-transparent border-white/30 text-white hover:bg-white/10 transition-all duration-300">
-                  Schedule Demo
-                </Button>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+              >
+                <GlowingGradientButton className="text-xl px-12 py-5 animate-glow">
+                  Get Started <ArrowRight className="w-6 h-6" />
+                </GlowingGradientButton>
               </motion.div>
+              <Button variant="outline" size="lg" className="bg-transparent border-white/30 text-white hover:bg-white/10 transition-all duration-300">
+                Schedule Demo
+              </Button>
             </div>
           </AnimatedSection>
         </div>
@@ -687,12 +576,9 @@ const HealthcareAILandingPage = () => {
       <footer className="py-12 px-6 bg-slate-900 text-slate-400 relative z-10">
         <div className="max-w-6xl mx-auto text-center">
           <AnimatedSection>
-            <motion.p 
-              className="text-sm"
-              whileHover={{ scale: 1.05 }}
-            >
+            <p className="text-sm">
               © 2024 HealthAI. Transforming healthcare through intelligent technology.
-            </motion.p>
+            </p>
           </AnimatedSection>
         </div>
       </footer>
