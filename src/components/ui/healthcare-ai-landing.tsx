@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from "react";
@@ -87,41 +88,6 @@ const CardContent = React.forwardRef<HTMLDivElement, CardProps>(
   )
 );
 CardContent.displayName = "CardContent";
-
-// Enhanced Glowing Button Component
-interface GlowingGradientButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
-}
-
-function GlowingGradientButton({ 
-  children, 
-  className = '',
-  ...props 
-}: GlowingGradientButtonProps) {
-  const [isHovered, setIsHovered] = useState(false);
-  
-  return (
-    <motion.button
-      className={`relative px-8 py-4 rounded-full text-lg font-semibold text-white cursor-pointer transition-all duration-300 ${className}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ scale: 1.05, y: -2 }}
-      whileTap={{ scale: 0.98 }}
-      {...props}
-    >
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 rounded-full" />
-      <motion.div 
-        className="absolute inset-0.5 bg-gray-900 rounded-full transition-opacity duration-500"
-        animate={{ opacity: isHovered ? 0.7 : 1 }}
-      />
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 rounded-full blur-xl transition-opacity duration-500"
-        animate={{ opacity: isHovered ? 1 : 0 }}
-      />
-      <span className="relative z-10 flex items-center gap-2">{children}</span>
-    </motion.button>
-  );
-}
 
 // Enhanced Animation Components
 interface AnimatedSectionProps {
@@ -670,7 +636,7 @@ const HealthcareAILandingPage = () => {
               Join thousands of healthcare professionals already using AI to improve patient outcomes.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <MagneticButton className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-xl px-12 py-5 shadow-2xl">
+              <MagneticButton className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover: to-cyan-600 text-xl px-12 py-5 shadow-2xl">
                 Get Started <ArrowRight className="w-6 h-6" />
               </MagneticButton>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
