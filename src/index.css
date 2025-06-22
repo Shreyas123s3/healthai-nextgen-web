@@ -45,6 +45,8 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --tile: rgba(59, 130, 246, 0.1);
   }
 
   .dark {
@@ -83,6 +85,8 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --tile: rgba(96, 165, 250, 0.15);
   }
 }
 
@@ -93,10 +97,6 @@
 
   body {
     @apply bg-background text-foreground;
-    background-image: 
-      radial-gradient(circle at 1px 1px, #e0f0ff 1px, transparent 0);
-    background-size: 32px 32px;
-    background-attachment: fixed;
   }
 }
 
