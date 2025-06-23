@@ -33,7 +33,7 @@ export const scrollAnimationVariants = {
       filter: 'blur(0px)',
       transition: {
         duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94],
+        ease: [0.25, 0.46, 0.45, 0.94] as any,
         staggerChildren: 0.1
       }
     }
@@ -52,7 +52,7 @@ export const scrollAnimationVariants = {
       filter: 'blur(0px)',
       transition: {
         duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94],
+        ease: [0.25, 0.46, 0.45, 0.94] as any,
         staggerChildren: 0.15
       }
     }
@@ -71,7 +71,7 @@ export const scrollAnimationVariants = {
       filter: 'blur(0px)',
       transition: {
         duration: 0.7,
-        ease: [0.23, 1, 0.32, 1],
+        ease: [0.23, 1, 0.32, 1] as any,
         staggerChildren: 0.08
       }
     }
@@ -90,7 +90,7 @@ export const scrollAnimationVariants = {
       filter: 'blur(0px)',
       transition: {
         duration: 0.8,
-        ease: [0.23, 1, 0.32, 1],
+        ease: [0.23, 1, 0.32, 1] as any,
         staggerChildren: 0.12
       }
     }
@@ -120,7 +120,7 @@ export const scrollAnimationVariants = {
       filter: 'blur(0px)',
       transition: {
         duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        ease: [0.25, 0.46, 0.45, 0.94] as any
       }
     }
   }

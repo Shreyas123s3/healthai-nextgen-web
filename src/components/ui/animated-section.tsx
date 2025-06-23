@@ -34,8 +34,9 @@ export function AnimatedSection({
       animate={isInView ? "visible" : "hidden"}
       variants={variants}
       transition={{ 
-        ...variants.visible.transition,
-        delay 
+        duration: 0.8,
+        delay,
+        ease: [0.25, 0.46, 0.45, 0.94]
       }}
       className={cn("will-change-transform", className)}
     >
@@ -57,7 +58,11 @@ export function AnimatedItem({
   return (
     <motion.div
       variants={scrollAnimationVariants.staggerItem}
-      transition={{ delay }}
+      transition={{ 
+        duration: 0.6,
+        delay,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }}
       className={cn("will-change-transform", className)}
     >
       {children}
@@ -81,8 +86,8 @@ export function ParallaxContainer({
     <motion.div
       ref={ref}
       className={cn("relative overflow-hidden", className)}
-      style={{
-        transform: isInView ? `translateY(${intensity * -20}px)` : 'translateY(0px)'
+      animate={{
+        y: isInView ? intensity * -20 : 0
       }}
       transition={{
         duration: 0.8,
