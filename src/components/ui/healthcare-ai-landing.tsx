@@ -14,6 +14,11 @@ import { AnimatedCounter } from "./animated-counter";
 import { MagneticButton } from "./magnetic-button";
 import { AnimatedSection, AnimatedItem, ParallaxContainer, TextReveal, ParallaxBackground } from "./animated-section";
 import { Tiles } from "./tiles";
+import { Floating3DCard } from "./floating-3d-card";
+import { Floating3DIcons } from "./floating-3d-icons";
+import { Interactive3DButton } from "./interactive-3d-button";
+import { SubtleBackgroundAnimation } from "./subtle-background-animation";
+import { EnhancedTooltip } from "./enhanced-tooltip";
 
 // Utility function
 const cn = (...classes: (string | undefined)[]) => {
@@ -287,22 +292,26 @@ const HealthcareAILandingPage = () => {
     {
       icon: <Brain className="w-8 h-8" />,
       title: "AI-Powered Diagnostics",
-      description: "Advanced machine learning algorithms for precise medical analysis and early detection"
+      description: "Advanced machine learning algorithms for precise medical analysis and early detection",
+      tooltip: "Our AI processes millions of medical cases to provide accurate diagnostics"
     },
     {
       icon: <Activity className="w-8 h-8" />,
       title: "Real-time Monitoring",
-      description: "Continuous health tracking with intelligent alerts and personalized insights"
+      description: "Continuous health tracking with intelligent alerts and personalized insights",
+      tooltip: "24/7 monitoring with instant notifications for critical changes"
     },
     {
       icon: <Shield className="w-8 h-8" />,
       title: "Secure & Private",
-      description: "HIPAA-compliant platform with military-grade encryption and data protection"
+      description: "HIPAA-compliant platform with military-grade encryption and data protection",
+      tooltip: "Your health data is protected with enterprise-level security"
     },
     {
       icon: <Stethoscope className="w-8 h-8" />,
       title: "Clinical Integration",
-      description: "Seamless workflow integration with existing medical systems and protocols"
+      description: "Seamless workflow integration with existing medical systems and protocols",
+      tooltip: "Works with all major healthcare management systems"
     }
   ];
 
@@ -332,7 +341,13 @@ const HealthcareAILandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Subtle Background Animation */}
+      <SubtleBackgroundAnimation />
+      
+      {/* Floating 3D Icons */}
+      <Floating3DIcons />
+
       {/* Fixed Tiles Background with Parallax */}
       <div className="fixed inset-0 z-0">
         <motion.div
@@ -409,18 +424,18 @@ const HealthcareAILandingPage = () => {
                 transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
                 className="flex flex-col sm:flex-row gap-4 justify-center items-center"
               >
-                <GlowingGradientButton className="animate-glow">
-                  Try It Now <ArrowRight className="w-5 h-5" />
-                </GlowingGradientButton>
-                <Button variant="outline" size="lg" className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                <Interactive3DButton variant="primary" size="lg" shimmer>
+                  Try It Now
+                </Interactive3DButton>
+                <Interactive3DButton variant="outline" size="lg">
                   Watch Demo
-                </Button>
+                </Interactive3DButton>
               </motion.div>
             </motion.div>
           </ContainerScale>
         </ContainerScroll>
 
-        {/* Enhanced Stats Section with Cinematic Staggered Animations */}
+        {/* Enhanced Stats Section with 3D Cards */}
         <section className="py-24 px-6 relative z-10 overflow-hidden">
           <ParallaxContainer intensity={0.3}>
             <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-sage-50/40 to-spa-blue-50/30 backdrop-blur-sm" />
@@ -434,15 +449,11 @@ const HealthcareAILandingPage = () => {
                     delay={index * 0.15}
                     className="text-center group"
                   >
-                    <motion.div
-                      whileHover={{ 
-                        scale: 1.08,
-                        y: -8,
-                        rotateY: 5,
-                        rotateX: 3
-                      }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
-                      className="mb-4 transform-gpu card-float glass-card-soft p-6 rounded-2xl"
+                    <Floating3DCard 
+                      depth="medium" 
+                      glowColor="rgba(16, 185, 129, 0.2)"
+                      floatIntensity={1.2}
+                      className="p-6"
                     >
                       <AnimatedCounter
                         end={stat.number}
@@ -452,7 +463,7 @@ const HealthcareAILandingPage = () => {
                       <p className="text-sage-600 font-medium mt-2 group-hover:text-sage-700 transition-colors duration-300">
                         {stat.label}
                       </p>
-                    </motion.div>
+                    </Floating3DCard>
                   </AnimatedItem>
                 ))}
               </div>
@@ -462,37 +473,39 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced Health Risk Scanner with Cinematic Parallax */}
+        {/* Enhanced Health Risk Scanner with 3D Card */}
         <div className="relative z-10 overflow-hidden py-12">
           <FloatingElements />
           <ParallaxContainer intensity={0.4}>
-            <AnimatedSection variant="scaleIn" threshold={0.2} className="glass-card-soft mx-4 rounded-3xl">
-              <HealthRiskScanner />
+            <AnimatedSection variant="scaleIn" threshold={0.2}>
+              <Floating3DCard className="mx-4" depth="deep" glowColor="rgba(6, 182, 212, 0.2)">
+                <HealthRiskScanner />
+              </Floating3DCard>
             </AnimatedSection>
           </ParallaxContainer>
         </div>
 
         <div className="section-divider" />
 
-        {/* Enhanced Diagnostic Chat with Sophisticated Slide Animation */}
+        {/* Enhanced Diagnostic Chat with 3D Card */}
         <AnimatedSection variant="slideFromLeft" threshold={0.15} className="relative z-10 py-12">
-          <div className="glass-card-soft mx-4 rounded-3xl">
+          <Floating3DCard className="mx-4" depth="deep" glowColor="rgba(16, 185, 129, 0.2)">
             <DiagnosticChat />
-          </div>
+          </Floating3DCard>
         </AnimatedSection>
 
         <div className="section-divider" />
 
-        {/* Enhanced Medical Upload with Cinematic Slide Animation */}
+        {/* Enhanced Medical Upload with 3D Card */}
         <AnimatedSection variant="slideFromRight" threshold={0.15} className="relative z-10 py-12">
-          <div className="glass-card-soft mx-4 rounded-3xl">
+          <Floating3DCard className="mx-4" depth="deep" glowColor="rgba(139, 69, 19, 0.1)">
             <MedicalUpload />
-          </div>
+          </Floating3DCard>
         </AnimatedSection>
 
         <div className="section-divider" />
 
-        {/* Enhanced Healthcare Testimonials with Luxury Fade Up */}
+        {/* Enhanced Healthcare Testimonials */}
         <section className="py-24 relative z-10">
           <ParallaxContainer intensity={0.2}>
             <div className="absolute inset-0 bg-gradient-to-br from-sage-50/30 via-transparent to-spa-blue-50/30" />
@@ -504,7 +517,7 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced How It Works Section with Premium Staggered Animations */}
+        {/* Enhanced How It Works Section with 3D Cards */}
         <section className="py-32 px-6 relative z-10 overflow-hidden">
           <ParallaxContainer intensity={0.25}>
             <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-sage-50/40 to-spa-blue-50/30 backdrop-blur-sm" />
@@ -538,39 +551,30 @@ const HealthcareAILandingPage = () => {
                     delay={index * 0.2}
                     className="group"
                   >
-                    <motion.div
-                      whileHover={{ 
-                        scale: 1.03, 
-                        y: -12,
-                        rotateY: 3,
-                        rotateX: 2
-                      }}
-                      transition={{ 
-                        duration: 0.6, 
-                        ease: "easeOut" 
-                      }}
-                      className="h-full transform-gpu card-float"
+                    <Floating3DCard 
+                      depth="medium" 
+                      glowColor={`rgba(${16 + index * 40}, ${185 - index * 20}, 129, 0.15)`}
+                      floatIntensity={0.8}
+                      className="h-full p-10"
                     >
-                      <div className="glass-card p-10 h-full rounded-3xl group-hover:shadow-2xl transition-all duration-500 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-sage-100/30 to-spa-blue-100/20 rounded-full -translate-y-16 translate-x-16" />
-                        <motion.div 
-                          className="text-7xl font-bold text-sage-200/60 mb-6 group-hover:text-sage-300/70 transition-colors relative z-10"
-                          whileHover={{ 
-                            rotate: [0, -2, 2, 0],
-                            scale: 1.05
-                          }}
-                          transition={{ duration: 0.8 }}
-                        >
-                          {step.number}
-                        </motion.div>
-                        <h3 className="text-2xl font-semibold mb-6 text-sage-800 relative z-10">
-                          {step.title}
-                        </h3>
-                        <p className="text-warm-neutral-600 leading-relaxed relative z-10 text-lg">
-                          {step.description}
-                        </p>
-                      </div>
-                    </motion.div>
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-sage-100/30 to-spa-blue-100/20 rounded-full -translate-y-16 translate-x-16" />
+                      <motion.div 
+                        className="text-7xl font-bold text-sage-200/60 mb-6 group-hover:text-sage-300/70 transition-colors relative z-10"
+                        whileHover={{ 
+                          rotate: [0, -2, 2, 0],
+                          scale: 1.05
+                        }}
+                        transition={{ duration: 0.8 }}
+                      >
+                        {step.number}
+                      </motion.div>
+                      <h3 className="text-2xl font-semibold mb-6 text-sage-800 relative z-10">
+                        {step.title}
+                      </h3>
+                      <p className="text-warm-neutral-600 leading-relaxed relative z-10 text-lg">
+                        {step.description}
+                      </p>
+                    </Floating3DCard>
                   </AnimatedItem>
                 ))}
               </div>
@@ -580,7 +584,7 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced Features Section with Luxury Staggered Cards */}
+        {/* Enhanced Features Section with 3D Cards and Tooltips */}
         <section className="py-32 px-6 relative z-10 overflow-hidden">
           <ParallaxContainer intensity={0.3}>
             <div className="absolute inset-0 bg-gradient-to-br from-sage-50/20 via-transparent to-spa-blue-50/20" />
@@ -615,20 +619,13 @@ const HealthcareAILandingPage = () => {
                     delay={index * 0.15}
                     className="group"
                   >
-                    <motion.div
-                      whileHover={{ 
-                        scale: 1.05, 
-                        rotateY: 6,
-                        rotateX: 3,
-                        y: -8
-                      }}
-                      transition={{ 
-                        duration: 0.6, 
-                        ease: "easeOut" 
-                      }}
-                      className="h-full transform-gpu perspective-1000 card-float"
-                    >
-                      <div className="glass-card p-8 h-full rounded-3xl group-hover:shadow-2xl transition-all duration-500 relative overflow-hidden">
+                    <EnhancedTooltip content={feature.tooltip}>
+                      <Floating3DCard 
+                        depth="medium" 
+                        glowColor={`rgba(${16 + index * 40}, ${185 - index * 20}, 129, 0.12)`}
+                        floatIntensity={1}
+                        className="h-full p-8 cursor-pointer"
+                      >
                         <div className="absolute inset-0 bg-gradient-to-br from-sage-50/30 to-spa-blue-50/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         <motion.div 
                           className="text-sage-500 mb-6 group-hover:text-sage-600 transition-colors relative z-10"
@@ -647,8 +644,8 @@ const HealthcareAILandingPage = () => {
                         <p className="text-warm-neutral-600 text-sm leading-relaxed relative z-10">
                           {feature.description}
                         </p>
-                      </div>
-                    </motion.div>
+                      </Floating3DCard>
+                    </EnhancedTooltip>
                   </AnimatedItem>
                 ))}
               </div>
@@ -658,7 +655,7 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced Screenshot Section with Cinematic Parallax */}
+        {/* Enhanced Screenshot Section with 3D Parallax */}
         <section className="py-32 px-6 relative z-10 overflow-hidden">
           <ParallaxContainer intensity={0.4}>
             <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-sage-50/30 to-spa-blue-50/20 backdrop-blur-sm" />
@@ -686,30 +683,23 @@ const HealthcareAILandingPage = () => {
 
             <ParallaxContainer intensity={0.3}>
               <AnimatedSection variant="scaleIn" delay={0.3} threshold={0.2}>
-                <motion.div className="relative max-w-5xl mx-auto">
-                  <motion.div 
-                    className="relative rounded-3xl overflow-hidden glass-card p-4"
-                    whileHover={{ 
-                      scale: 1.02,
-                      rotateY: 1,
-                      rotateX: 0.5
-                    }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-sage-50/20 to-spa-blue-50/10" />
-                    <div className="relative z-10">
-                      <motion.img
-                        src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2340&auto=format&fit=crop"
-                        alt="Healthcare AI Dashboard"
-                        className="w-full h-auto rounded-2xl shadow-2xl"
-                        initial={{ scale: 1.1, opacity: 0.8, filter: 'blur(4px)' }}
-                        whileInView={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
-                        transition={{ duration: 1.2, ease: "easeOut" }}
-                        viewport={{ once: true, margin: "-10%" }}
-                      />
-                    </div>
-                  </motion.div>
-                </motion.div>
+                <Floating3DCard 
+                  className="max-w-5xl mx-auto p-4" 
+                  depth="deep" 
+                  glowColor="rgba(16, 185, 129, 0.1)"
+                >
+                  <div className="relative z-10">
+                    <motion.img
+                      src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2340&auto=format&fit=crop"
+                      alt="Healthcare AI Dashboard"
+                      className="w-full h-auto rounded-2xl shadow-2xl"
+                      initial={{ scale: 1.1, opacity: 0.8, filter: 'blur(4px)' }}
+                      whileInView={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
+                      transition={{ duration: 1.2, ease: "easeOut" }}
+                      viewport={{ once: true, margin: "-10%" }}
+                    />
+                  </div>
+                </Floating3DCard>
               </AnimatedSection>
             </ParallaxContainer>
           </div>
@@ -717,7 +707,7 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced Final CTA Section with Cinematic Effects */}
+        {/* Enhanced Final CTA Section with 3D Effects */}
         <section className="py-32 px-6 relative z-10 overflow-hidden">
           <ParallaxContainer intensity={0.5}>
             <div className="absolute inset-0 bg-gradient-to-br from-sage-900/95 via-sage-800/90 to-spa-blue-900/85 backdrop-blur-sm" />
@@ -759,28 +749,21 @@ const HealthcareAILandingPage = () => {
                 transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-10%" }}
               >
-                <motion.div
-                  whileHover={{ scale: 1.08, rotateY: 2 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.4 }}
+                <Interactive3DButton 
+                  variant="primary" 
+                  size="lg" 
+                  className="text-white shadow-2xl"
+                  shimmer
                 >
-                  <MagneticButton className="btn-premium btn-magnetic bg-gradient-to-r from-sage-500 to-spa-blue-500 text-white px-12 py-6 rounded-full text-xl font-semibold shadow-2xl hover:shadow-sage-500/25">
-                    Get Started Today <ArrowRight className="w-6 h-6 ml-2" />
-                  </MagneticButton>
-                </motion.div>
-                <motion.div 
-                  whileHover={{ scale: 1.05, rotateY: -2 }} 
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.4 }}
+                  Get Started Today
+                </Interactive3DButton>
+                <Interactive3DButton 
+                  variant="outline" 
+                  size="lg" 
+                  className="border-white/20 text-white hover:bg-white/10"
                 >
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="glass-card-soft border-white/20 text-white hover:bg-white/10 transition-all duration-300 px-8 py-6 text-lg"
-                  >
-                    Schedule Demo
-                  </Button>
-                </motion.div>
+                  Schedule Demo
+                </Interactive3DButton>
               </motion.div>
             </AnimatedSection>
           </div>
