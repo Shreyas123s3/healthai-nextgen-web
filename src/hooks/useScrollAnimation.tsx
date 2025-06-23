@@ -6,7 +6,7 @@ export function useScrollAnimation(threshold = 0.1, once = true, margin?: string
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { 
     once, 
-    margin: margin || "0px 0px -10% 0px"
+    margin: margin as any || "0px 0px -10% 0px"
   });
   
   return { ref, isInView };
