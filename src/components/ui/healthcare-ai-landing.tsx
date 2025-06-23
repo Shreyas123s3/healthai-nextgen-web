@@ -145,45 +145,6 @@ function useScrollAnimationOld() {
   return [ref, isInView] as const;
 }
 
-// Animated Section Wrapper with enhanced effects
-interface AnimatedSectionProps {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-  direction?: 'up' | 'left' | 'right' | 'zoom' | 'slideInLeft' | 'slideInRight';
-}
-
-function AnimatedSection({ children, className = "", delay = 0, direction = 'up' }: AnimatedSectionProps) {
-  const [ref, isInView] = useScrollAnimationOld();
-  
-  const variants = {
-    up: { y: 60, opacity: 0 },
-    left: { x: -60, opacity: 0 },
-    right: { x: 60, opacity: 0 },
-    zoom: { scale: 0.8, opacity: 0 },
-    slideInLeft: { x: -100, opacity: 0 },
-    slideInRight: { x: 100, opacity: 0 }
-  };
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={variants[direction]}
-      animate={isInView ? { x: 0, y: 0, scale: 1, opacity: 1 } : variants[direction]}
-      transition={{ 
-        duration: 0.8, 
-        delay, 
-        ease: [0.25, 0.46, 0.45, 0.94],
-        type: "spring",
-        stiffness: 60
-      }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
 // Scroll Animation Components
 interface ContainerScrollContextValue {
   scrollYProgress: MotionValue<number>;
