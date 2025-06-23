@@ -358,7 +358,7 @@ const HealthcareAILandingPage = () => {
     },
     {
       number: "03",
-4 title: "Get Insights",
+      title: "Get Insights",
       description: "Receive personalized health recommendations, alerts, and actionable insights"
     }
   ];
