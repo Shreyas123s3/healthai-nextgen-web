@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from "react";
@@ -339,7 +338,7 @@ const HealthcareAILandingPage = () => {
         <motion.div
           initial={{ opacity: 0.2, scale: 1.1 }}
           animate={{ opacity: 0.4, scale: 1 }}
-          transition={{ duration: 2, ease: [0.215, 0.61, 0.355, 1] }}
+          transition={{ duration: 2, ease: "easeOut" }}
         >
           <Tiles 
             rows={120} 
@@ -371,7 +370,7 @@ const HealthcareAILandingPage = () => {
                   animate={{ scale: 1, opacity: 0.8 }}
                   transition={{ 
                     duration: 2 + index * 0.2, 
-                    ease: [0.215, 0.61, 0.355, 1] 
+                    ease: "easeOut" 
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent" />
@@ -383,13 +382,13 @@ const HealthcareAILandingPage = () => {
             <motion.div
               initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ duration: 1.5, ease: [0.215, 0.61, 0.355, 1] }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
               className="max-w-4xl mx-auto px-6"
             >
               <motion.h1 
                 initial={{ opacity: 0, y: 60, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 1.2, delay: 0.3, ease: [0.215, 0.61, 0.355, 1] }}
+                transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
                 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent"
               >
                 AI for Healthcare.
@@ -399,7 +398,7 @@ const HealthcareAILandingPage = () => {
               <motion.p 
                 initial={{ opacity: 0, y: 30, filter: 'blur(4px)' }}
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 1, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
                 className="text-xl md:text-2xl text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed"
               >
                 Experience health like never before — powered by intelligent design and cutting-edge AI technology.
@@ -407,7 +406,7 @@ const HealthcareAILandingPage = () => {
               <motion.div 
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 1, delay: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
+                transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
                 className="flex flex-col sm:flex-row gap-4 justify-center items-center"
               >
                 <GlowingGradientButton className="animate-glow">
@@ -442,7 +441,7 @@ const HealthcareAILandingPage = () => {
                         rotateY: 5,
                         rotateX: 3
                       }}
-                      transition={{ duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
                       className="mb-4 transform-gpu card-float glass-card-soft p-6 rounded-2xl"
                     >
                       <AnimatedCounter
@@ -548,7 +547,7 @@ const HealthcareAILandingPage = () => {
                       }}
                       transition={{ 
                         duration: 0.6, 
-                        ease: [0.215, 0.61, 0.355, 1] 
+                        ease: "easeOut" 
                       }}
                       className="h-full transform-gpu card-float"
                     >
@@ -625,7 +624,7 @@ const HealthcareAILandingPage = () => {
                       }}
                       transition={{ 
                         duration: 0.6, 
-                        ease: [0.215, 0.61, 0.355, 1] 
+                        ease: "easeOut" 
                       }}
                       className="h-full transform-gpu perspective-1000 card-float"
                     >
@@ -695,7 +694,7 @@ const HealthcareAILandingPage = () => {
                       rotateY: 1,
                       rotateX: 0.5
                     }}
-                    transition={{ duration: 0.8, ease: [0.215, 0.61, 0.355, 1] }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-sage-50/20 to-spa-blue-50/10" />
                     <div className="relative z-10">
@@ -705,7 +704,7 @@ const HealthcareAILandingPage = () => {
                         className="w-full h-auto rounded-2xl shadow-2xl"
                         initial={{ scale: 1.1, opacity: 0.8, filter: 'blur(4px)' }}
                         whileInView={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
-                        transition={{ duration: 1.2, ease: [0.215, 0.61, 0.355, 1] }}
+                        transition={{ duration: 1.2, ease: "easeOut" }}
                         viewport={{ once: true, margin: "-10%" }}
                       />
                     </div>
@@ -735,18 +734,8 @@ const HealthcareAILandingPage = () => {
                 className="text-4xl md:text-7xl font-bold mb-8 leading-tight"
                 initial={{ opacity: 0, y: 40, scale: 0.9 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 1.2, ease: [0.215, 0.61, 0.355, 1] }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-10%" }}
-                whileHover={{ 
-                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                }}
-                animate={{
-                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                }}
-                transition={{ 
-                  backgroundPosition: { duration: 4, repeat: Infinity, ease: "linear" },
-                  hover: { duration: 2, ease: "easeInOut" }
-                }}
                 style={{
                   background: "linear-gradient(45deg, #ffffff, #10b981, #06b6d4, #ffffff)",
                   backgroundSize: "200% 200%",
@@ -767,7 +756,7 @@ const HealthcareAILandingPage = () => {
                 className="flex flex-col sm:flex-row gap-6 justify-center items-center"
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 1, delay: 0.8, ease: [0.215, 0.61, 0.355, 1] }}
+                transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-10%" }}
               >
                 <motion.div

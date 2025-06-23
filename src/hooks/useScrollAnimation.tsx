@@ -6,7 +6,7 @@ export function useScrollAnimation(threshold = 0.1, once = true, margin?: string
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { 
     once, 
-    margin: margin || `${-threshold * 100}% 0px ${-threshold * 100}% 0px`
+    margin: margin || "0px 0px -10% 0px"
   });
   
   return { ref, isInView };
@@ -35,7 +35,7 @@ export const scrollAnimationVariants = {
       scale: 1,
       transition: {
         duration: 1.2,
-        ease: [0.215, 0.61, 0.355, 1],
+        ease: "easeOut",
         staggerChildren: 0.15
       }
     }
@@ -58,7 +58,7 @@ export const scrollAnimationVariants = {
       rotateY: 0,
       transition: {
         duration: 1.2,
-        ease: [0.215, 0.61, 0.355, 1],
+        ease: "easeOut",
         staggerChildren: 0.2
       }
     }
@@ -79,7 +79,7 @@ export const scrollAnimationVariants = {
       scale: 1,
       transition: {
         duration: 1,
-        ease: [0.25, 0.46, 0.45, 0.94],
+        ease: "easeOut",
         staggerChildren: 0.12
       }
     }
@@ -102,7 +102,7 @@ export const scrollAnimationVariants = {
       y: 0,
       transition: {
         duration: 1.4,
-        ease: [0.19, 1, 0.22, 1],
+        ease: "easeOut",
         staggerChildren: 0.18
       }
     }
@@ -140,7 +140,7 @@ export const scrollAnimationVariants = {
       rotateX: 0,
       transition: {
         duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        ease: "easeOut"
       }
     }
   },
@@ -158,7 +158,7 @@ export const scrollAnimationVariants = {
       opacity: 1,
       transition: {
         duration: 2,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        ease: "easeOut"
       }
     }
   }

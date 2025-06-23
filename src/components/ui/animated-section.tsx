@@ -2,7 +2,7 @@
 "use client"
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { useScrollAnimation, scrollAnimationVariants } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
 
@@ -25,7 +25,7 @@ export function AnimatedSection({
 }: AnimatedSectionProps) {
   const { ref, isInView } = useScrollAnimation(threshold, once);
   
-  const variants = scrollAnimationVariants[variant];
+  const variants = scrollAnimationVariants[variant] as Variants;
   
   return (
     <motion.div
@@ -36,7 +36,7 @@ export function AnimatedSection({
       transition={{ 
         duration: 1.2,
         delay,
-        ease: [0.215, 0.61, 0.355, 1]
+        ease: "easeOut"
       }}
       className={cn("will-change-transform", className)}
       style={{ perspective: 1000 }}
@@ -56,14 +56,31 @@ export function AnimatedItem({
   className?: string;
   delay?: number;
 }) {
-  return (
-    <motion.div
-      variants={scrollAnimationVariants.staggerItem}
-      transition={{ 
+  const itemVariants: Variants = {
+    hidden: { 
+      opacity: 0, 
+      y: 50,
+      filter: 'blur(4px)',
+      scale: 0.9,
+      rotateX: 10
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      filter: 'blur(0px)',
+      scale: 1,
+      rotateX: 0,
+      transition: {
         duration: 0.8,
         delay,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }}
+        ease: "easeOut"
+      }
+    }
+  };
+
+  return (
+    <motion.div
+      variants={itemVariants}
       className={cn("will-change-transform", className)}
       style={{ perspective: 1000 }}
     >
@@ -102,7 +119,7 @@ export function ParallaxContainer({
       }}
       transition={{
         duration: 1.5,
-        ease: [0.215, 0.61, 0.355, 1]
+        ease: "easeOut"
       }}
       style={{ perspective: 1200 }}
     >
@@ -139,7 +156,7 @@ export function TextReveal({
       transition={{
         duration: 1,
         delay,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        ease: "easeOut"
       }}
       className={cn("will-change-transform", className)}
     >
@@ -182,7 +199,7 @@ export function ParallaxBackground({
         }}
         transition={{
           duration: 2,
-          ease: [0.215, 0.61, 0.355, 1]
+          ease: "easeOut"
         }}
         style={{
           backgroundImage: `url(${imageUrl})`,
