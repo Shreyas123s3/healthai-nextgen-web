@@ -71,7 +71,7 @@ export function Interactive3DButton({
       {shimmer && (
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-          initial={{ x: '-100%', skew: -15 }}
+          initial={{ x: '-100%', skewX: -15 }}
           animate={isHovered ? { x: '200%' } : { x: '-100%' }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
         />
