@@ -102,7 +102,7 @@
 }
 
 .glass-card-soft {
-  @apply backdrop-blur-lg bg-white/60 dark:bg-white/3 border border-white/30 shadow-xl shadow-black/3;
+  @apply backdrop-blur-lg bg-white/60 dark:bg-white/5 border border-white/30 shadow-xl shadow-black/5;
 }
 
 /* Premium Button Effects */
