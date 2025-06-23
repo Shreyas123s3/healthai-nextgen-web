@@ -20,7 +20,7 @@ export function AnimatedSection({
   className = "", 
   variant = 'fadeUp',
   delay = 0,
-  threshold = 0.1,
+  threshold = 0.15,
   once = true
 }: AnimatedSectionProps) {
   const { ref, isInView } = useScrollAnimation(threshold, once);
@@ -34,18 +34,19 @@ export function AnimatedSection({
       animate={isInView ? "visible" : "hidden"}
       variants={variants}
       transition={{ 
-        duration: 0.8,
+        duration: 1.2,
         delay,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        ease: [0.215, 0.61, 0.355, 1]
       }}
       className={cn("will-change-transform", className)}
+      style={{ perspective: 1000 }}
     >
       {children}
     </motion.div>
   );
 }
 
-// Component for individual items within staggered containers
+// Enhanced component for individual items within staggered containers
 export function AnimatedItem({ 
   children, 
   className = "",
@@ -59,7 +60,84 @@ export function AnimatedItem({
     <motion.div
       variants={scrollAnimationVariants.staggerItem}
       transition={{ 
-        duration: 0.6,
+        duration: 0.8,
+        delay,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }}
+      className={cn("will-change-transform", className)}
+      style={{ perspective: 1000 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// Enhanced parallax container with depth effects
+export function ParallaxContainer({ 
+  children, 
+  className = "",
+  intensity = 0.6,
+  scale = 1.1
+}: {
+  children: React.ReactNode;
+  className?: string;
+  intensity?: number;
+  scale?: number;
+}) {
+  const { ref, isInView } = useScrollAnimation(0.2, false);
+  
+  return (
+    <motion.div
+      ref={ref}
+      className={cn("relative overflow-hidden", className)}
+      initial={{ 
+        y: intensity * 30, 
+        scale: scale,
+        opacity: 0.8 
+      }}
+      animate={{
+        y: isInView ? 0 : intensity * 30,
+        scale: isInView ? 1 : scale,
+        opacity: isInView ? 1 : 0.8
+      }}
+      transition={{
+        duration: 1.5,
+        ease: [0.215, 0.61, 0.355, 1]
+      }}
+      style={{ perspective: 1200 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// Cinematic text reveal component
+export function TextReveal({
+  children,
+  className = "",
+  direction = 'up',
+  delay = 0
+}: {
+  children: React.ReactNode;
+  className?: string;
+  direction?: 'up' | 'left' | 'right';
+  delay?: number;
+}) {
+  const { ref, isInView } = useScrollAnimation(0.1, true);
+
+  const variants = {
+    up: { y: 40, opacity: 0, filter: 'blur(3px)' },
+    left: { x: -40, opacity: 0, filter: 'blur(3px)' },
+    right: { x: 40, opacity: 0, filter: 'blur(3px)' }
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={variants[direction]}
+      animate={isInView ? { x: 0, y: 0, opacity: 1, filter: 'blur(0px)' } : variants[direction]}
+      transition={{
+        duration: 1,
         delay,
         ease: [0.25, 0.46, 0.45, 0.94]
       }}
@@ -70,31 +148,53 @@ export function AnimatedItem({
   );
 }
 
-// Component for parallax background effects
-export function ParallaxContainer({ 
-  children, 
+// Background image with parallax effect
+export function ParallaxBackground({
+  imageUrl,
   className = "",
-  intensity = 0.5
+  intensity = 0.5,
+  children
 }: {
-  children: React.ReactNode;
+  imageUrl: string;
   className?: string;
   intensity?: number;
+  children?: React.ReactNode;
 }) {
-  const { ref, isInView } = useScrollAnimation(0.2, false);
-  
+  const { ref, isInView } = useScrollAnimation(0.3, false);
+
   return (
     <motion.div
       ref={ref}
       className={cn("relative overflow-hidden", className)}
-      animate={{
-        y: isInView ? intensity * -20 : 0
-      }}
-      transition={{
-        duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94]
+      style={{
+        backgroundImage: `url(${imageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
       }}
     >
-      {children}
+      <motion.div
+        className="absolute inset-0"
+        initial={{ scale: 1.2, y: 50 }}
+        animate={{
+          scale: isInView ? 1 : 1.2,
+          y: isInView ? 0 : 50
+        }}
+        transition={{
+          duration: 2,
+          ease: [0.215, 0.61, 0.355, 1]
+        }}
+        style={{
+          backgroundImage: `url(${imageUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      />
+      {children && (
+        <div className="relative z-10">
+          {children}
+        </div>
+      )}
     </motion.div>
   );
 }

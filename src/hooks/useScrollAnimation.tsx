@@ -2,11 +2,11 @@
 import { useRef } from 'react';
 import { useInView } from 'framer-motion';
 
-export function useScrollAnimation(threshold = 0.1, once = true) {
+export function useScrollAnimation(threshold = 0.1, once = true, margin?: string) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { 
     once, 
-    margin: `${-threshold * 100}% 0px ${-threshold * 100}% 0px`
+    margin: margin || `${-threshold * 100}% 0px ${-threshold * 100}% 0px`
   });
   
   return { ref, isInView };
@@ -18,109 +18,147 @@ export function useStaggeredAnimation(itemsCount: number, baseDelay = 0.1) {
   }));
 }
 
-// Enhanced scroll animation variants for healthcare-appropriate motion
+// Enhanced scroll animation variants for premium cinematic effects
 export const scrollAnimationVariants = {
-  // Gentle slide from left for headings
+  // Cinematic slide from left with blur effect
   slideFromLeft: {
     hidden: { 
       opacity: 0, 
-      x: -60,
-      filter: 'blur(4px)'
+      x: -80,
+      filter: 'blur(6px)',
+      scale: 0.95
     },
     visible: { 
       opacity: 1, 
       x: 0,
       filter: 'blur(0px)',
+      scale: 1,
       transition: {
-        duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94] as any,
-        staggerChildren: 0.1
-      }
-    }
-  },
-
-  // Gentle slide from right for supporting content
-  slideFromRight: {
-    hidden: { 
-      opacity: 0, 
-      x: 60,
-      filter: 'blur(4px)'
-    },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      filter: 'blur(0px)',
-      transition: {
-        duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94] as any,
+        duration: 1.2,
+        ease: [0.215, 0.61, 0.355, 1],
         staggerChildren: 0.15
       }
     }
   },
 
-  // Gentle fade up for text blocks
+  // Cinematic slide from right with depth
+  slideFromRight: {
+    hidden: { 
+      opacity: 0, 
+      x: 80,
+      filter: 'blur(6px)',
+      scale: 0.95,
+      rotateY: 15
+    },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      filter: 'blur(0px)',
+      scale: 1,
+      rotateY: 0,
+      transition: {
+        duration: 1.2,
+        ease: [0.215, 0.61, 0.355, 1],
+        staggerChildren: 0.2
+      }
+    }
+  },
+
+  // Premium fade up with elastic spring
   fadeUp: {
     hidden: { 
       opacity: 0, 
-      y: 40,
-      filter: 'blur(2px)'
+      y: 60,
+      filter: 'blur(4px)',
+      scale: 0.9
     },
     visible: { 
       opacity: 1, 
       y: 0,
       filter: 'blur(0px)',
-      transition: {
-        duration: 0.7,
-        ease: [0.23, 1, 0.32, 1] as any,
-        staggerChildren: 0.08
-      }
-    }
-  },
-
-  // Gentle scale for cards and images
-  scaleIn: {
-    hidden: { 
-      opacity: 0, 
-      scale: 0.95,
-      filter: 'blur(3px)'
-    },
-    visible: { 
-      opacity: 1, 
       scale: 1,
-      filter: 'blur(0px)',
       transition: {
-        duration: 0.8,
-        ease: [0.23, 1, 0.32, 1] as any,
+        duration: 1,
+        ease: [0.25, 0.46, 0.45, 0.94],
         staggerChildren: 0.12
       }
     }
   },
 
-  // Staggered container for multiple items
-  staggerContainer: {
-    hidden: {},
-    visible: {
+  // Luxurious scale with rotation hint
+  scaleIn: {
+    hidden: { 
+      opacity: 0, 
+      scale: 0.8,
+      filter: 'blur(8px)',
+      rotateX: 15,
+      y: 40
+    },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      filter: 'blur(0px)',
+      rotateX: 0,
+      y: 0,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
+        duration: 1.4,
+        ease: [0.19, 1, 0.22, 1],
+        staggerChildren: 0.18
       }
     }
   },
 
-  // Individual stagger item
+  // Sophisticated staggered container
+  staggerContainer: {
+    hidden: {
+      opacity: 0
+    },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.1,
+        duration: 0.6
+      }
+    }
+  },
+
+  // Individual stagger item with cinematic entry
   staggerItem: {
     hidden: { 
       opacity: 0, 
-      y: 30,
-      filter: 'blur(2px)'
+      y: 50,
+      filter: 'blur(4px)',
+      scale: 0.9,
+      rotateX: 10
     },
     visible: { 
       opacity: 1, 
       y: 0,
       filter: 'blur(0px)',
+      scale: 1,
+      rotateX: 0,
       transition: {
-        duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94] as any
+        duration: 0.8,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    }
+  },
+
+  // Parallax background effect
+  parallax: {
+    hidden: { 
+      y: 100,
+      scale: 1.2,
+      opacity: 0.7
+    },
+    visible: { 
+      y: 0,
+      scale: 1,
+      opacity: 1,
+      transition: {
+        duration: 2,
+        ease: [0.25, 0.46, 0.45, 0.94]
       }
     }
   }

@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from "react";
@@ -12,7 +13,7 @@ import { FloatingElements } from "./floating-elements";
 import { HealthcareTestimonials } from "./testimonials-columns-1";
 import { AnimatedCounter } from "./animated-counter";
 import { MagneticButton } from "./magnetic-button";
-import { AnimatedSection, AnimatedItem, ParallaxContainer } from "./animated-section";
+import { AnimatedSection, AnimatedItem, ParallaxContainer, TextReveal, ParallaxBackground } from "./animated-section";
 import { Tiles } from "./tiles";
 
 // Utility function
@@ -333,19 +334,25 @@ const HealthcareAILandingPage = () => {
 
   return (
     <div className="min-h-screen relative">
-      {/* Fixed Tiles Background */}
+      {/* Fixed Tiles Background with Parallax */}
       <div className="fixed inset-0 z-0">
-        <Tiles 
-          rows={120} 
-          cols={20}
-          tileSize="md"
-          className="w-full h-full opacity-40"
-        />
+        <motion.div
+          initial={{ opacity: 0.2, scale: 1.1 }}
+          animate={{ opacity: 0.4, scale: 1 }}
+          transition={{ duration: 2, ease: [0.215, 0.61, 0.355, 1] }}
+        >
+          <Tiles 
+            rows={120} 
+            cols={20}
+            tileSize="md"
+            className="w-full h-full"
+          />
+        </motion.div>
       </div>
 
       {/* Main Content with enhanced background */}
       <div className="relative z-10 premium-bg">
-        {/* Hero Section - UNCHANGED as requested */}
+        {/* Hero Section with Enhanced Cinematic Entry */}
         <ContainerScroll className="h-[400vh] relative z-10">
           <BentoGrid
             variant="fourCells"
@@ -356,10 +363,16 @@ const HealthcareAILandingPage = () => {
                 key={index}
                 className="overflow-hidden rounded-2xl shadow-2xl backdrop-blur-sm bg-white/10 border border-white/20"
               >
-                <img
+                <motion.img
                   className="size-full object-cover object-center opacity-80"
                   src={imageUrl}
                   alt={`Healthcare technology ${index + 1}`}
+                  initial={{ scale: 1.2, opacity: 0.6 }}
+                  animate={{ scale: 1, opacity: 0.8 }}
+                  transition={{ 
+                    duration: 2 + index * 0.2, 
+                    ease: [0.215, 0.61, 0.355, 1] 
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent" />
               </BentoCell>
@@ -368,15 +381,15 @@ const HealthcareAILandingPage = () => {
           
           <ContainerScale className="text-center z-20">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 1.5, ease: [0.215, 0.61, 0.355, 1] }}
               className="max-w-4xl mx-auto px-6"
             >
               <motion.h1 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.2 }}
+                initial={{ opacity: 0, y: 60, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 1.2, delay: 0.3, ease: [0.215, 0.61, 0.355, 1] }}
                 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent"
               >
                 AI for Healthcare.
@@ -384,17 +397,17 @@ const HealthcareAILandingPage = () => {
                 <span className="text-slate-800">Smarter Starts Here.</span>
               </motion.h1>
               <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
+                initial={{ opacity: 0, y: 30, filter: 'blur(4px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 1, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
                 className="text-xl md:text-2xl text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed"
               >
                 Experience health like never before — powered by intelligent design and cutting-edge AI technology.
               </motion.p>
               <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
+                initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 1, delay: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
                 className="flex flex-col sm:flex-row gap-4 justify-center items-center"
               >
                 <GlowingGradientButton className="animate-glow">
@@ -408,26 +421,28 @@ const HealthcareAILandingPage = () => {
           </ContainerScale>
         </ContainerScroll>
 
-        {/* Enhanced Stats Section with Smooth Scroll Animations */}
+        {/* Enhanced Stats Section with Cinematic Staggered Animations */}
         <section className="py-24 px-6 relative z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-sage-50/40 to-spa-blue-50/30 backdrop-blur-sm" />
+          <ParallaxContainer intensity={0.3}>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-sage-50/40 to-spa-blue-50/30 backdrop-blur-sm" />
+          </ParallaxContainer>
           <div className="max-w-6xl mx-auto relative">
             <AnimatedSection variant="staggerContainer">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
                 {stats.map((stat, index) => (
                   <AnimatedItem
                     key={index}
-                    delay={index * 0.1}
+                    delay={index * 0.15}
                     className="text-center group"
                   >
                     <motion.div
                       whileHover={{ 
-                        scale: 1.05,
-                        y: -4,
-                        rotateY: 3,
-                        rotateX: 2
+                        scale: 1.08,
+                        y: -8,
+                        rotateY: 5,
+                        rotateX: 3
                       }}
-                      transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                      transition={{ duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }}
                       className="mb-4 transform-gpu card-float glass-card-soft p-6 rounded-2xl"
                     >
                       <AnimatedCounter
@@ -448,11 +463,11 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced Health Risk Scanner with Parallax */}
+        {/* Enhanced Health Risk Scanner with Cinematic Parallax */}
         <div className="relative z-10 overflow-hidden py-12">
           <FloatingElements />
-          <ParallaxContainer intensity={0.3}>
-            <AnimatedSection variant="scaleIn" className="glass-card-soft mx-4 rounded-3xl">
+          <ParallaxContainer intensity={0.4}>
+            <AnimatedSection variant="scaleIn" threshold={0.2} className="glass-card-soft mx-4 rounded-3xl">
               <HealthRiskScanner />
             </AnimatedSection>
           </ParallaxContainer>
@@ -460,8 +475,8 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced Diagnostic Chat with Slide Animation */}
-        <AnimatedSection variant="slideFromLeft" className="relative z-10 py-12">
+        {/* Enhanced Diagnostic Chat with Sophisticated Slide Animation */}
+        <AnimatedSection variant="slideFromLeft" threshold={0.15} className="relative z-10 py-12">
           <div className="glass-card-soft mx-4 rounded-3xl">
             <DiagnosticChat />
           </div>
@@ -469,8 +484,8 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced Medical Upload with Slide Animation */}
-        <AnimatedSection variant="slideFromRight" className="relative z-10 py-12">
+        {/* Enhanced Medical Upload with Cinematic Slide Animation */}
+        <AnimatedSection variant="slideFromRight" threshold={0.15} className="relative z-10 py-12">
           <div className="glass-card-soft mx-4 rounded-3xl">
             <MedicalUpload />
           </div>
@@ -478,54 +493,62 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced Healthcare Testimonials with Fade Up */}
+        {/* Enhanced Healthcare Testimonials with Luxury Fade Up */}
         <section className="py-24 relative z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-sage-50/30 via-transparent to-spa-blue-50/30" />
-          <AnimatedSection variant="fadeUp" className="relative">
+          <ParallaxContainer intensity={0.2}>
+            <div className="absolute inset-0 bg-gradient-to-br from-sage-50/30 via-transparent to-spa-blue-50/30" />
+          </ParallaxContainer>
+          <AnimatedSection variant="fadeUp" threshold={0.1} className="relative">
             <HealthcareTestimonials />
           </AnimatedSection>
         </section>
 
         <div className="section-divider" />
 
-        {/* Enhanced How It Works Section with Staggered Animations */}
+        {/* Enhanced How It Works Section with Premium Staggered Animations */}
         <section className="py-32 px-6 relative z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-sage-50/40 to-spa-blue-50/30 backdrop-blur-sm" />
+          <ParallaxContainer intensity={0.25}>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-sage-50/40 to-spa-blue-50/30 backdrop-blur-sm" />
+          </ParallaxContainer>
           <div className="max-w-6xl mx-auto relative">
-            <AnimatedSection variant="slideFromLeft" className="text-center mb-20">
-              <motion.div
-                className="inline-block px-6 py-2 rounded-full bg-sage-100/50 text-sage-700 text-sm font-medium mb-6"
-              >
-                How It Works
-              </motion.div>
-              <h2 className="text-4xl md:text-6xl font-bold mb-6 text-premium leading-tight">
-                Your Health Journey
-                <br />
-                <span className="text-sage-800">Simplified</span>
-              </h2>
-              <p className="text-xl text-warm-neutral-600 max-w-2xl mx-auto leading-relaxed">
-                Three simple steps to transform your healthcare experience with intelligent AI assistance
-              </p>
+            <AnimatedSection variant="slideFromLeft" threshold={0.2} className="text-center mb-20">
+              <TextReveal direction="up" delay={0.2}>
+                <div className="inline-block px-6 py-2 rounded-full bg-sage-100/50 text-sage-700 text-sm font-medium mb-6">
+                  How It Works
+                </div>
+              </TextReveal>
+              <TextReveal direction="up" delay={0.4}>
+                <h2 className="text-4xl md:text-6xl font-bold mb-6 text-premium leading-tight">
+                  Your Health Journey
+                  <br />
+                  <span className="text-sage-800">Simplified</span>
+                </h2>
+              </TextReveal>
+              <TextReveal direction="up" delay={0.6}>
+                <p className="text-xl text-warm-neutral-600 max-w-2xl mx-auto leading-relaxed">
+                  Three simple steps to transform your healthcare experience with intelligent AI assistance
+                </p>
+              </TextReveal>
             </AnimatedSection>
 
-            <AnimatedSection variant="staggerContainer">
+            <AnimatedSection variant="staggerContainer" threshold={0.15}>
               <div className="grid md:grid-cols-3 gap-12">
                 {steps.map((step, index) => (
                   <AnimatedItem
                     key={index}
-                    delay={index * 0.15}
+                    delay={index * 0.2}
                     className="group"
                   >
                     <motion.div
                       whileHover={{ 
-                        scale: 1.02, 
-                        y: -8,
-                        rotateY: 2,
-                        rotateX: 1
+                        scale: 1.03, 
+                        y: -12,
+                        rotateY: 3,
+                        rotateX: 2
                       }}
                       transition={{ 
-                        duration: 0.5, 
-                        ease: [0.23, 1, 0.32, 1] 
+                        duration: 0.6, 
+                        ease: [0.215, 0.61, 0.355, 1] 
                       }}
                       className="h-full transform-gpu card-float"
                     >
@@ -534,10 +557,10 @@ const HealthcareAILandingPage = () => {
                         <motion.div 
                           className="text-7xl font-bold text-sage-200/60 mb-6 group-hover:text-sage-300/70 transition-colors relative z-10"
                           whileHover={{ 
-                            rotate: [0, -3, 3, 0],
+                            rotate: [0, -2, 2, 0],
                             scale: 1.05
                           }}
-                          transition={{ duration: 0.6 }}
+                          transition={{ duration: 0.8 }}
                         >
                           {step.number}
                         </motion.div>
@@ -558,45 +581,51 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced Features Section with Staggered Cards */}
+        {/* Enhanced Features Section with Luxury Staggered Cards */}
         <section className="py-32 px-6 relative z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-sage-50/20 via-transparent to-spa-blue-50/20" />
+          <ParallaxContainer intensity={0.3}>
+            <div className="absolute inset-0 bg-gradient-to-br from-sage-50/20 via-transparent to-spa-blue-50/20" />
+          </ParallaxContainer>
           <FloatingElements />
           <div className="max-w-6xl mx-auto relative">
-            <AnimatedSection variant="slideFromRight" className="text-center mb-20">
-              <motion.div
-                className="inline-block px-6 py-2 rounded-full bg-spa-blue-100/50 text-spa-blue-700 text-sm font-medium mb-6"
-              >
-                Advanced Features
-              </motion.div>
-              <h2 className="text-4xl md:text-6xl font-bold mb-6 text-sage-800 leading-tight">
-                Why Choose Our
-                <br />
-                <span className="text-premium">AI Healthcare Platform</span>
-              </h2>
-              <p className="text-xl text-warm-neutral-600 max-w-2xl mx-auto leading-relaxed">
-                Advanced AI capabilities designed specifically for healthcare professionals and patients
-              </p>
+            <AnimatedSection variant="slideFromRight" threshold={0.2} className="text-center mb-20">
+              <TextReveal direction="right" delay={0.2}>
+                <div className="inline-block px-6 py-2 rounded-full bg-spa-blue-100/50 text-spa-blue-700 text-sm font-medium mb-6">
+                  Advanced Features
+                </div>
+              </TextReveal>
+              <TextReveal direction="up" delay={0.4}>
+                <h2 className="text-4xl md:text-6xl font-bold mb-6 text-sage-800 leading-tight">
+                  Why Choose Our
+                  <br />
+                  <span className="text-premium">AI Healthcare Platform</span>
+                </h2>
+              </TextReveal>
+              <TextReveal direction="up" delay={0.6}>
+                <p className="text-xl text-warm-neutral-600 max-w-2xl mx-auto leading-relaxed">
+                  Advanced AI capabilities designed specifically for healthcare professionals and patients
+                </p>
+              </TextReveal>
             </AnimatedSection>
 
-            <AnimatedSection variant="staggerContainer">
+            <AnimatedSection variant="staggerContainer" threshold={0.15}>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {features.map((feature, index) => (
                   <AnimatedItem
                     key={index}
-                    delay={index * 0.1}
+                    delay={index * 0.15}
                     className="group"
                   >
                     <motion.div
                       whileHover={{ 
-                        scale: 1.03, 
-                        rotateY: 4,
-                        rotateX: 2,
-                        y: -6
+                        scale: 1.05, 
+                        rotateY: 6,
+                        rotateX: 3,
+                        y: -8
                       }}
                       transition={{ 
-                        duration: 0.4, 
-                        ease: [0.23, 1, 0.32, 1] 
+                        duration: 0.6, 
+                        ease: [0.215, 0.61, 0.355, 1] 
                       }}
                       className="h-full transform-gpu perspective-1000 card-float"
                     >
@@ -605,11 +634,11 @@ const HealthcareAILandingPage = () => {
                         <motion.div 
                           className="text-sage-500 mb-6 group-hover:text-sage-600 transition-colors relative z-10"
                           whileHover={{ 
-                            scale: 1.15, 
-                            rotate: 3,
-                            y: -2
+                            scale: 1.2, 
+                            rotate: 5,
+                            y: -4
                           }}
-                          transition={{ duration: 0.3 }}
+                          transition={{ duration: 0.4 }}
                         >
                           {feature.icon}
                         </motion.div>
@@ -630,37 +659,43 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced Screenshot Section with Parallax */}
+        {/* Enhanced Screenshot Section with Cinematic Parallax */}
         <section className="py-32 px-6 relative z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-sage-50/30 to-spa-blue-50/20 backdrop-blur-sm" />
+          <ParallaxContainer intensity={0.4}>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-sage-50/30 to-spa-blue-50/20 backdrop-blur-sm" />
+          </ParallaxContainer>
           <div className="max-w-6xl mx-auto text-center relative">
-            <AnimatedSection variant="fadeUp" className="mb-16">
-              <motion.div
-                className="inline-block px-6 py-2 rounded-full bg-sage-100/50 text-sage-700 text-sm font-medium mb-6"
-              >
-                Platform Preview
-              </motion.div>
-              <h2 className="text-4xl md:text-6xl font-bold mb-8 text-sage-800 leading-tight">
-                See Innovation
-                <br />
-                <span className="text-premium">In Action</span>
-              </h2>
-              <p className="text-xl text-warm-neutral-600 max-w-2xl mx-auto leading-relaxed">
-                Experience the future of healthcare with our intuitive, AI-powered interface designed for excellence
-              </p>
+            <AnimatedSection variant="fadeUp" threshold={0.2} className="mb-16">
+              <TextReveal direction="up" delay={0.2}>
+                <div className="inline-block px-6 py-2 rounded-full bg-sage-100/50 text-sage-700 text-sm font-medium mb-6">
+                  Platform Preview
+                </div>
+              </TextReveal>
+              <TextReveal direction="up" delay={0.4}>
+                <h2 className="text-4xl md:text-6xl font-bold mb-8 text-sage-800 leading-tight">
+                  See Innovation
+                  <br />
+                  <span className="text-premium">In Action</span>
+                </h2>
+              </TextReveal>
+              <TextReveal direction="up" delay={0.6}>
+                <p className="text-xl text-warm-neutral-600 max-w-2xl mx-auto leading-relaxed">
+                  Experience the future of healthcare with our intuitive, AI-powered interface designed for excellence
+                </p>
+              </TextReveal>
             </AnimatedSection>
 
-            <ParallaxContainer intensity={0.2}>
-              <AnimatedSection variant="scaleIn" delay={0.3}>
+            <ParallaxContainer intensity={0.3}>
+              <AnimatedSection variant="scaleIn" delay={0.3} threshold={0.2}>
                 <motion.div className="relative max-w-5xl mx-auto">
                   <motion.div 
                     className="relative rounded-3xl overflow-hidden glass-card p-4"
                     whileHover={{ 
-                      scale: 1.01,
-                      rotateY: 0.5,
-                      rotateX: 0.3
+                      scale: 1.02,
+                      rotateY: 1,
+                      rotateX: 0.5
                     }}
-                    transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                    transition={{ duration: 0.8, ease: [0.215, 0.61, 0.355, 1] }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-sage-50/20 to-spa-blue-50/10" />
                     <div className="relative z-10">
@@ -668,8 +703,10 @@ const HealthcareAILandingPage = () => {
                         src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2340&auto=format&fit=crop"
                         alt="Healthcare AI Dashboard"
                         className="w-full h-auto rounded-2xl shadow-2xl"
-                        whileHover={{ scale: 1.005 }}
-                        transition={{ duration: 0.3 }}
+                        initial={{ scale: 1.1, opacity: 0.8, filter: 'blur(4px)' }}
+                        whileInView={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
+                        transition={{ duration: 1.2, ease: [0.215, 0.61, 0.355, 1] }}
+                        viewport={{ once: true, margin: "-10%" }}
                       />
                     </div>
                   </motion.div>
@@ -681,23 +718,35 @@ const HealthcareAILandingPage = () => {
 
         <div className="section-divider" />
 
-        {/* Enhanced Final CTA Section */}
+        {/* Enhanced Final CTA Section with Cinematic Effects */}
         <section className="py-32 px-6 relative z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-sage-900/95 via-sage-800/90 to-spa-blue-900/85 backdrop-blur-sm" />
+          <ParallaxContainer intensity={0.5}>
+            <div className="absolute inset-0 bg-gradient-to-br from-sage-900/95 via-sage-800/90 to-spa-blue-900/85 backdrop-blur-sm" />
+          </ParallaxContainer>
           <FloatingElements />
           <div className="max-w-4xl mx-auto text-center relative">
-            <AnimatedSection variant="scaleIn">
-              <motion.div
-                className="inline-block px-6 py-2 rounded-full bg-white/10 text-white/80 text-sm font-medium mb-8 backdrop-blur-sm"
-              >
-                Ready to Transform Healthcare?
-              </motion.div>
+            <AnimatedSection variant="scaleIn" threshold={0.2}>
+              <TextReveal direction="up" delay={0.2}>
+                <div className="inline-block px-6 py-2 rounded-full bg-white/10 text-white/80 text-sm font-medium mb-8 backdrop-blur-sm">
+                  Ready to Transform Healthcare?
+                </div>
+              </TextReveal>
               <motion.h2 
                 className="text-4xl md:text-7xl font-bold mb-8 leading-tight"
-                whileInView={{ 
+                initial={{ opacity: 0, y: 40, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 1.2, ease: [0.215, 0.61, 0.355, 1] }}
+                viewport={{ once: true, margin: "-10%" }}
+                whileHover={{ 
                   backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                 }}
-                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                animate={{
+                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                }}
+                transition={{ 
+                  backgroundPosition: { duration: 4, repeat: Infinity, ease: "linear" },
+                  hover: { duration: 2, ease: "easeInOut" }
+                }}
                 style={{
                   background: "linear-gradient(45deg, #ffffff, #10b981, #06b6d4, #ffffff)",
                   backgroundSize: "200% 200%",
@@ -709,21 +758,31 @@ const HealthcareAILandingPage = () => {
                 <br />
                 Starts Here
               </motion.h2>
-              <p className="text-xl md:text-2xl text-sage-100 mb-12 max-w-2xl mx-auto leading-relaxed">
-                Join thousands of healthcare professionals already using AI to improve patient outcomes and transform lives.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <TextReveal direction="up" delay={0.6}>
+                <p className="text-xl md:text-2xl text-sage-100 mb-12 max-w-2xl mx-auto leading-relaxed">
+                  Join thousands of healthcare professionals already using AI to improve patient outcomes and transform lives.
+                </p>
+              </TextReveal>
+              <motion.div 
+                className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+                initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 1, delay: 0.8, ease: [0.215, 0.61, 0.355, 1] }}
+                viewport={{ once: true, margin: "-10%" }}
+              >
                 <motion.div
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.08, rotateY: 2 }}
                   whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.4 }}
                 >
                   <MagneticButton className="btn-premium btn-magnetic bg-gradient-to-r from-sage-500 to-spa-blue-500 text-white px-12 py-6 rounded-full text-xl font-semibold shadow-2xl hover:shadow-sage-500/25">
                     Get Started Today <ArrowRight className="w-6 h-6 ml-2" />
                   </MagneticButton>
                 </motion.div>
                 <motion.div 
-                  whileHover={{ scale: 1.05 }} 
+                  whileHover={{ scale: 1.05, rotateY: -2 }} 
                   whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.4 }}
                 >
                   <Button 
                     variant="outline" 
@@ -733,7 +792,7 @@ const HealthcareAILandingPage = () => {
                     Schedule Demo
                   </Button>
                 </motion.div>
-              </div>
+              </motion.div>
             </AnimatedSection>
           </div>
         </section>
