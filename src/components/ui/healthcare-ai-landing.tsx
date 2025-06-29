@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from "react";
@@ -738,7 +739,7 @@ const HealthcareAILandingPage = () => {
               </motion.div>
             </AnimatedSection>
           </div>
-        </Section>
+        </section>
       </div>
     </div>
   );
