@@ -5,9 +5,6 @@ import { motion, useScroll, useTransform, MotionValue, HTMLMotionProps, useInVie
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { ChevronRight, Heart, Shield, Zap, Users, ArrowRight, CheckCircle, Brain, Activity, Stethoscope, TrendingUp, Award, Clock } from "lucide-react";
-import { HealthRiskScanner } from "./health-risk-scanner";
-import { DiagnosticChat } from "./diagnostic-chat";
-import { MedicalUpload } from "./medical-upload";
 import { FloatingElements } from "./floating-elements";
 import { HealthcareTestimonials } from "./testimonials-columns-1";
 import { AnimatedCounter } from "./animated-counter";
@@ -19,6 +16,7 @@ import { Glassmorphic3DCard } from "./glassmorphic-3d-card";
 import { Premium3DButton } from "./premium-3d-button";
 import { Medical3DIllustrations } from "./medical-3d-illustrations";
 import { EnhancedSectionDivider } from "./enhanced-section-divider";
+import { Link } from "react-router-dom";
 
 // Utility function
 const cn = (...classes: (string | undefined)[]) => {
@@ -293,19 +291,22 @@ const HealthcareAILandingPage = () => {
       icon: <Brain className="w-8 h-8" />,
       title: "AI-Powered Diagnostics",
       description: "Advanced machine learning algorithms for precise medical analysis and early detection",
-      illustration: "brain-scan"
+      illustration: "brain-scan",
+      link: "/health-scanner"
     },
     {
       icon: <Activity className="w-8 h-8" />,
       title: "Real-time Monitoring",
       description: "Continuous health tracking with intelligent alerts and personalized insights",
-      illustration: "heartbeat"
+      illustration: "heartbeat",
+      link: "/diagnosis-chat"
     },
     {
       icon: <Shield className="w-8 h-8" />,
       title: "Secure & Private",
       description: "HIPAA-compliant platform with military-grade encryption and data protection",
-      illustration: "molecules"
+      illustration: "molecules",
+      link: "/medical-reports"
     },
     {
       icon: <Stethoscope className="w-8 h-8" />,
@@ -344,7 +345,7 @@ const HealthcareAILandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative pt-20">
       {/* Fixed Tiles Background with Parallax */}
       <div className="fixed inset-0 z-0">
         <motion.div
@@ -467,37 +468,79 @@ const HealthcareAILandingPage = () => {
 
         <EnhancedSectionDivider variant="glow" />
 
-        {/* Enhanced Health Risk Scanner with 3D Elements */}
-        <div className="relative z-10 overflow-hidden py-12">
-          <Floating3DMedicalIcons variant="diagnostic" className="opacity-60" />
-          <ParallaxContainer intensity={0.4}>
-            <AnimatedSection variant="scaleIn" threshold={0.2}>
-              <Glassmorphic3DCard className="mx-4" intensity="medium" glowColor="spa-blue">
-                <HealthRiskScanner />
-              </Glassmorphic3DCard>
-            </AnimatedSection>
+        {/* Quick Access to Features Section */}
+        <section className="py-32 px-6 relative z-10 overflow-hidden">
+          <ParallaxContainer intensity={0.25}>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-sage-50/40 to-spa-blue-50/30 backdrop-blur-sm" />
           </ParallaxContainer>
-        </div>
+          <div className="max-w-6xl mx-auto relative">
+            <AnimatedSection variant="slideFromLeft" threshold={0.2} className="text-center mb-20">
+              <TextReveal direction="up" delay={0.2}>
+                <div className="inline-block px-6 py-2 rounded-full bg-sage-100/50 text-sage-700 text-sm font-medium mb-6">
+                  Explore Our Features
+                </div>
+              </TextReveal>
+              <TextReveal direction="up" delay={0.4}>
+                <h2 className="text-4xl md:text-6xl font-bold mb-6 text-premium leading-tight">
+                  Powerful AI Tools
+                  <br />
+                  <span className="text-sage-800">At Your Fingertips</span>
+                </h2>
+              </TextReveal>
+              <TextReveal direction="up" delay={0.6}>
+                <p className="text-xl text-warm-neutral-600 max-w-2xl mx-auto leading-relaxed">
+                  Discover our suite of AI-powered healthcare tools designed to transform your health journey
+                </p>
+              </TextReveal>
+            </AnimatedSection>
 
-        <EnhancedSectionDivider variant="particle" />
-
-        {/* Enhanced Diagnostic Chat with 3D Card */}
-        <AnimatedSection variant="slideFromLeft" threshold={0.15} className="relative z-10 py-12">
-          <Floating3DMedicalIcons variant="analysis" className="opacity-50" />
-          <Glassmorphic3DCard className="mx-4" intensity="subtle" glowColor="sage">
-            <DiagnosticChat />
-          </Glassmorphic3DCard>
-        </AnimatedSection>
-
-        <EnhancedSectionDivider variant="glow" />
-
-        {/* Enhanced Medical Upload with 3D Elements */}
-        <AnimatedSection variant="slideFromRight" threshold={0.15} className="relative z-10 py-12">
-          <Floating3DMedicalIcons variant="monitoring" className="opacity-50" />
-          <Glassmorphic3DCard className="mx-4" intensity="medium" glowColor="white">
-            <MedicalUpload />
-          </Glassmorphic3DCard>
-        </AnimatedSection>
+            <AnimatedSection variant="staggerContainer" threshold={0.15}>
+              <div className="grid md:grid-cols-3 gap-8">
+                {features.slice(0, 3).map((feature, index) => (
+                  <AnimatedItem
+                    key={index}
+                    delay={index * 0.2}
+                    className="group"
+                  >
+                    <Link to={feature.link}>
+                      <Glassmorphic3DCard intensity="medium" glowColor="sage">
+                        <div className="p-10 h-full relative z-10 cursor-pointer hover:scale-105 transition-transform duration-300">
+                          <div className="flex items-center justify-between mb-6">
+                            <motion.div 
+                              className="text-sage-500 group-hover:text-sage-600 transition-colors"
+                              whileHover={{ 
+                                scale: 1.2, 
+                                rotate: 5,
+                                y: -4
+                              }}
+                              transition={{ duration: 0.4 }}
+                            >
+                              {feature.icon}
+                            </motion.div>
+                            <Medical3DIllustrations 
+                              type={feature.illustration as any} 
+                              size="md" 
+                            />
+                          </div>
+                          <h3 className="text-2xl font-semibold mb-6 text-sage-800">
+                            {feature.title}
+                          </h3>
+                          <p className="text-warm-neutral-600 leading-relaxed text-lg mb-6">
+                            {feature.description}
+                          </p>
+                          <div className="flex items-center text-sage-600 group-hover:text-sage-700 transition-colors">
+                            <span className="text-sm font-medium">Try it now</span>
+                            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </div>
+                      </Glassmorphic3DCard>
+                    </Link>
+                  </AnimatedItem>
+                ))}
+              </div>
+            </AnimatedSection>
+          </div>
+        </section>
 
         <EnhancedSectionDivider variant="particle" />
 
@@ -585,77 +628,6 @@ const HealthcareAILandingPage = () => {
         </section>
 
         <EnhancedSectionDivider variant="particle" />
-
-        {/* Enhanced Features Section with 3D Cards and Illustrations */}
-        <section className="py-32 px-6 relative z-10 overflow-hidden">
-          <ParallaxContainer intensity={0.3}>
-            <div className="absolute inset-0 bg-gradient-to-br from-sage-50/20 via-transparent to-spa-blue-50/20" />
-          </ParallaxContainer>
-          <FloatingElements />
-          <div className="max-w-6xl mx-auto relative">
-            <AnimatedSection variant="slideFromRight" threshold={0.2} className="text-center mb-20">
-              <TextReveal direction="right" delay={0.2}>
-                <div className="inline-block px-6 py-2 rounded-full bg-spa-blue-100/50 text-spa-blue-700 text-sm font-medium mb-6">
-                  Advanced Features
-                </div>
-              </TextReveal>
-              <TextReveal direction="up" delay={0.4}>
-                <h2 className="text-4xl md:text-6xl font-bold mb-6 text-sage-800 leading-tight">
-                  Why Choose Our
-                  <br />
-                  <span className="text-premium">AI Healthcare Platform</span>
-                </h2>
-              </TextReveal>
-              <TextReveal direction="up" delay={0.6}>
-                <p className="text-xl text-warm-neutral-600 max-w-2xl mx-auto leading-relaxed">
-                  Advanced AI capabilities designed specifically for healthcare professionals and patients
-                </p>
-              </TextReveal>
-            </AnimatedSection>
-
-            <AnimatedSection variant="staggerContainer" threshold={0.15}>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {features.map((feature, index) => (
-                  <AnimatedItem
-                    key={index}
-                    delay={index * 0.15}
-                    className="group"
-                  >
-                    <Glassmorphic3DCard intensity="strong" glowColor="sage">
-                      <div className="p-8 h-full relative overflow-hidden">
-                        <div className="flex items-center justify-between mb-6">
-                          <motion.div 
-                            className="text-sage-500 group-hover:text-sage-600 transition-colors"
-                            whileHover={{ 
-                              scale: 1.2, 
-                              rotate: 5,
-                              y: -4
-                            }}
-                            transition={{ duration: 0.4 }}
-                          >
-                            {feature.icon}
-                          </motion.div>
-                          <Medical3DIllustrations 
-                            type={feature.illustration as any} 
-                            size="sm" 
-                          />
-                        </div>
-                        <h3 className="text-xl font-semibold mb-4 text-sage-800">
-                          {feature.title}
-                        </h3>
-                        <p className="text-warm-neutral-600 text-sm leading-relaxed">
-                          {feature.description}
-                        </p>
-                      </div>
-                    </Glassmorphic3DCard>
-                  </AnimatedItem>
-                ))}
-              </div>
-            </AnimatedSection>
-          </div>
-        </section>
-
-        <EnhancedSectionDivider variant="glow" />
 
         {/* Enhanced Screenshot Section with 3D Frame */}
         <section className="py-32 px-6 relative z-10 overflow-hidden">
@@ -766,7 +738,7 @@ const HealthcareAILandingPage = () => {
               </motion.div>
             </AnimatedSection>
           </div>
-        </section>
+        </Section>
       </div>
     </div>
   );
