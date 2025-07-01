@@ -63,6 +63,7 @@
     --warm-neutral-100: 30 17% 95%;
     --warm-neutral-200: 30 15% 88%;
     --warm-neutral-300: 30 12% 78%;
+    --warm-neutral-600: 30 10% 45%;
     --warm-neutral-800: 30 8% 25%;
   }
 
@@ -252,4 +253,9 @@
   background: linear-gradient(90deg, transparent, hsl(var(--sage-200)), transparent);
   height: 1px;
   margin: 4rem 0;
+}
+
+/* Custom radial gradient for chat background enhancement */
+.bg-gradient-radial {
+  background: radial-gradient(circle at center, var(--tw-gradient-stops));
 }

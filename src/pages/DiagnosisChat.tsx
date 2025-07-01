@@ -8,8 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 
+interface Message {
+  id: number;
+  type: 'bot' | 'user';
+  content: string;
+}
+
 const DiagnosisChat = () => {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
       type: 'bot',
@@ -17,24 +23,78 @@ const DiagnosisChat = () => {
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [sendClicked, setSendClicked] = useState(false);
 
-  const handleSendMessage = () => {
-    if (inputMessage.trim()) {
-      setMessages([...messages, {
+  const handleSendMessage = async () => {
+    if (inputMessage.trim() && !isLoading) {
+      const userMessage: Message = {
         id: messages.length + 1,
         type: 'user',
         content: inputMessage
-      }]);
-      setInputMessage('');
+      };
       
-      // Simulate AI response
-      setTimeout(() => {
-        setMessages(prev => [...prev, {
-          id: prev.length + 1,
-          type: 'bot',
-          content: "Thank you for your message. This is a demo response. In a real implementation, this would connect to our AI diagnostic system to provide personalized health insights."
-        }]);
-      }, 1000);
+      setMessages(prev => [...prev, userMessage]);
+      const currentInput = inputMessage;
+      setInputMessage('');
+      setIsLoading(true);
+      setSendClicked(true);
+      
+      // Reset send animation after brief delay
+      setTimeout(() => setSendClicked(false), 200);
+      
+      try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer sk-svcacct-WKZLW7PzN-2X16W50LFAiH6BqdN6XAwv2Lxg3nuoozQqyYF3pEpEAgLNQfHqo9h215werT3BlbkFJTwrkg2UvBfkTqjfJE0SzPyC0C7lZEN9G4giikVSkg2Kco4s5J6TMH7sm0gJEkj6aC7LCAA',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gpt-3.5-turbo',
+            messages: [
+              {
+                role: 'system',
+                content: 'You are a helpful AI medical assistant. Provide informative health guidance while always reminding users to consult healthcare professionals for serious concerns. Keep responses concise and helpful.'
+              },
+              {
+                role: 'user',
+                content: currentInput
+              }
+            ],
+            max_tokens: 500,
+            temperature: 0.7,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('API request failed');
+        }
+
+        const data = await response.json();
+        const aiResponse = data.choices[0]?.message?.content || "I'm sorry, I couldn't process your request right now.";
+        
+        // Add typing delay for realism
+        setTimeout(() => {
+          setMessages(prev => [...prev, {
+            id: prev.length + 1,
+            type: 'bot',
+            content: aiResponse
+          }]);
+          setIsLoading(false);
+        }, 1000);
+        
+      } catch (error) {
+        console.error('Error calling OpenAI API:', error);
+        setTimeout(() => {
+          setMessages(prev => [...prev, {
+            id: prev.length + 1,
+            type: 'bot',
+            content: "Sorry, something went wrong. Please try again."
+          }]);
+          setIsLoading(false);
+        }, 1000);
+      }
     }
   };
 
@@ -55,6 +115,9 @@ const DiagnosisChat = () => {
           />
         </motion.div>
       </div>
+
+      {/* Subtle background enhancement */}
+      <div className="fixed inset-0 z-5 bg-gradient-radial from-sage-50/30 via-transparent to-transparent pointer-events-none" />
 
       {/* Main Content */}
       <div className="relative z-10 premium-bg pt-20">
@@ -86,53 +149,82 @@ const DiagnosisChat = () => {
             </p>
           </motion.div>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-white/30 h-96 flex flex-col">
-            <CardContent className="p-6 flex-1 flex flex-col">
-              {/* Messages Area */}
-              <div className="flex-1 overflow-y-auto mb-4 space-y-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex items-start gap-3 ${
-                      message.type === 'user' ? 'flex-row-reverse' : ''
+          {/* Enhanced Chat Card with Glow */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-sage-400/20 via-sage-300/30 to-sage-400/20 rounded-lg blur-xl animate-pulse opacity-60" />
+            <Card className="relative bg-white/85 backdrop-blur-sm border-white/40 h-96 flex flex-col shadow-2xl shadow-sage-200/50">
+              <CardContent className="p-6 flex-1 flex flex-col">
+                {/* Messages Area */}
+                <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+                  {messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex items-start gap-3 ${
+                        message.type === 'user' ? 'flex-row-reverse' : ''
+                      }`}
+                    >
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        message.type === 'bot' 
+                          ? 'bg-sage-100 text-sage-600' 
+                          : 'bg-blue-100 text-blue-600'
+                      }`}>
+                        {message.type === 'bot' ? <Bot size={16} /> : <User size={16} />}
+                      </div>
+                      <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm ${
+                        message.type === 'bot'
+                          ? 'bg-sage-50 text-sage-800 shadow-sage-100/50'
+                          : 'bg-blue-500 text-white shadow-blue-200/50'
+                      }`}>
+                        <p className="text-sm leading-relaxed">{message.content}</p>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Typing indicator */}
+                  {isLoading && (
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center bg-sage-100 text-sage-600">
+                        <Bot size={16} />
+                      </div>
+                      <div className="bg-sage-50 px-4 py-3 rounded-2xl shadow-sm shadow-sage-100/50">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-sage-400 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-sage-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-2 h-2 bg-sage-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Enhanced Input Area */}
+                <div className="flex gap-2">
+                  <Input
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    placeholder="Describe your symptoms or ask a health question..."
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    className="flex-1 border-sage-200 focus:border-sage-400 focus:ring-sage-400/20"
+                    disabled={isLoading}
+                  />
+                  <Button 
+                    onClick={handleSendMessage}
+                    disabled={isLoading || !inputMessage.trim()}
+                    className={`bg-sage-600 hover:bg-sage-700 transition-all duration-200 ${
+                      sendClicked ? 'scale-95 bg-sage-700' : ''
                     }`}
                   >
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      message.type === 'bot' 
-                        ? 'bg-sage-100 text-sage-600' 
-                        : 'bg-blue-100 text-blue-600'
-                    }`}>
-                      {message.type === 'bot' ? <Bot size={16} /> : <User size={16} />}
-                    </div>
-                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                      message.type === 'bot'
-                        ? 'bg-sage-50 text-sage-800'
-                        : 'bg-blue-500 text-white'
-                    }`}>
-                      <p className="text-sm">{message.content}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Input Area */}
-              <div className="flex gap-2">
-                <Input
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  placeholder="Describe your symptoms or ask a health question..."
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  className="flex-1"
-                />
-                <Button 
-                  onClick={handleSendMessage}
-                  className="bg-sage-600 hover:bg-sage-700"
-                >
-                  <Send size={16} />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                    <motion.div
+                      animate={sendClicked ? { scale: [1, 1.2, 1] } : {}}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Send size={16} />
+                    </motion.div>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
           <p className="text-center text-sm text-warm-neutral-500 mt-4">
             This AI assistant provides information only and should not replace professional medical advice
