@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, MessageCircle, Send, Bot, User } from 'lucide-react';
@@ -44,18 +43,20 @@ const DiagnosisChat = () => {
       setTimeout(() => setSendClicked(false), 200);
       
       try {
+        console.log('Sending request to OpenAI with message:', currentInput);
+        
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: {
-            'Authorization': 'Bearer sk-svcacct-WKZLW7PzN-2X16W50LFAiH6BqdN6XAwv2Lxg3nuoozQqyYF3pEpEAgLNQfHqo9h215werT3BlbkFJTwrkg2UvBfkTqjfJE0SzPyC0C7lZEN9G4giikVSkg2Kco4s5J6TMH7sm0gJEkj6aC7LCAA',
+            'Authorization': 'Bearer sk-svcacct-WKZLW7PzN-2X16W50LFAiH6BqdN6XAwv2Lxg3nuoozQqyYF3pEpEAgLNQfHqo9h215werT3BlbkFJTwrkg2UvBfkTqjfJE0SzPyC0C7lZEN9G4giikVSkg2UvBfkTqjfJE0SzPyC0C7lZEN9G4giikVSkg2Kco4s5J6TMH7sm0gJEkj6aC7LCAA',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'gpt-3.5-turbo',
+            model: 'gpt-4o-mini',
             messages: [
               {
                 role: 'system',
-                content: 'You are a helpful AI medical assistant. Provide informative health guidance while always reminding users to consult healthcare professionals for serious concerns. Keep responses concise and helpful.'
+                content: 'You are a helpful AI medical assistant. Provide informative health guidance while always reminding users to consult healthcare professionals for serious concerns. Keep responses concise and helpful. Always end your responses by advising users to consult with healthcare professionals for proper diagnosis and treatment.'
               },
               {
                 role: 'user',
@@ -67,12 +68,28 @@ const DiagnosisChat = () => {
           }),
         });
 
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+
         if (!response.ok) {
-          throw new Error('API request failed');
+          const errorData = await response.json();
+          console.error('API Error:', errorData);
+          
+          let errorMessage = "Sorry, something went wrong. Please try again.";
+          
+          if (errorData.error?.code === 'insufficient_quota') {
+            errorMessage = "The API quota has been exceeded. Please check your OpenAI billing details or try again later.";
+          } else if (errorData.error?.message) {
+            errorMessage = `Error: ${errorData.error.message}`;
+          }
+          
+          throw new Error(errorMessage);
         }
 
         const data = await response.json();
-        const aiResponse = data.choices[0]?.message?.content || "I'm sorry, I couldn't process your request right now.";
+        console.log('API Response:', data);
+        
+        const aiResponse = data.choices?.[0]?.message?.content || "I'm sorry, I couldn't process your request right now. Please try again.";
         
         // Add typing delay for realism
         setTimeout(() => {
@@ -90,7 +107,7 @@ const DiagnosisChat = () => {
           setMessages(prev => [...prev, {
             id: prev.length + 1,
             type: 'bot',
-            content: "Sorry, something went wrong. Please try again."
+            content: error instanceof Error ? error.message : "Sorry, something went wrong. Please try again."
           }]);
           setIsLoading(false);
         }, 1000);
@@ -118,6 +135,11 @@ const DiagnosisChat = () => {
 
       {/* Subtle background enhancement */}
       <div className="fixed inset-0 z-5 bg-gradient-radial from-sage-50/30 via-transparent to-transparent pointer-events-none" />
+      
+      {/* Subtle radial gradient enhancement for chat area */}
+      <div className="fixed inset-0 z-5 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-radial from-sage-100/20 via-transparent to-transparent opacity-60" />
+      </div>
 
       {/* Main Content */}
       <div className="relative z-10 premium-bg pt-20">
@@ -151,8 +173,8 @@ const DiagnosisChat = () => {
 
           {/* Enhanced Chat Card with Glow */}
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-sage-400/20 via-sage-300/30 to-sage-400/20 rounded-lg blur-xl animate-pulse opacity-60" />
-            <Card className="relative bg-white/85 backdrop-blur-sm border-white/40 h-96 flex flex-col shadow-2xl shadow-sage-200/50">
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 via-emerald-300/30 to-emerald-400/20 rounded-lg blur-xl animate-glow-pulse opacity-60" />
+            <Card className="relative bg-white/85 backdrop-blur-sm border-white/40 h-96 flex flex-col shadow-2xl shadow-sage-200/50 chat-glow">
               <CardContent className="p-6 flex-1 flex flex-col">
                 {/* Messages Area */}
                 <div className="flex-1 overflow-y-auto mb-4 space-y-4">
@@ -170,7 +192,7 @@ const DiagnosisChat = () => {
                       }`}>
                         {message.type === 'bot' ? <Bot size={16} /> : <User size={16} />}
                       </div>
-                      <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm ${
+                      <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm chat-bubble ${
                         message.type === 'bot'
                           ? 'bg-sage-50 text-sage-800 shadow-sage-100/50'
                           : 'bg-blue-500 text-white shadow-blue-200/50'
@@ -210,7 +232,7 @@ const DiagnosisChat = () => {
                   <Button 
                     onClick={handleSendMessage}
                     disabled={isLoading || !inputMessage.trim()}
-                    className={`bg-sage-600 hover:bg-sage-700 transition-all duration-200 ${
+                    className={`bg-sage-600 hover:bg-sage-700 transition-all duration-200 send-button ${
                       sendClicked ? 'scale-95 bg-sage-700' : ''
                     }`}
                   >
