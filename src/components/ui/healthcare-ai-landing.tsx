@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from "react";
@@ -386,14 +387,7 @@ const HealthcareAILandingPage = () => {
                     ease: "easeOut" 
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent" 
-                     style={{
-                       backgroundImage: `url(https://images.unsplash.com/photo-1559757148-5c350d0d3c56?q=80&w=2340&auto=format&fit=crop)`,
-                       backgroundSize: 'cover',
-                       backgroundPosition: 'center',
-                       backgroundBlendMode: 'overlay',
-                       opacity: 0.15
-                     }} />
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent" />
               </BentoCell>
             ))}
           </BentoGrid>
