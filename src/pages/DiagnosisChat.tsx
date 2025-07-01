@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, MessageCircle, Send, Bot, User } from 'lucide-react';
@@ -48,7 +49,7 @@ const DiagnosisChat = () => {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: {
-            'Authorization': 'Bearer sk-svcacct-WKZLW7PzN-2X16W50LFAiH6BqdN6XAwv2Lxg3nuoozQqyYF3pEpEAgLNQfHqo9h215werT3BlbkFJTwrkg2UvBfkTqjfJE0SzPyC0C7lZEN9G4giikVSkg2UvBfkTqjfJE0SzPyC0C7lZEN9G4giikVSkg2Kco4s5J6TMH7sm0gJEkj6aC7LCAA',
+            'Authorization': 'Bearer sk-svcacct-WKZLW7PzN-2X16W50LFAiH6BqdN6XAwv2Lxg3nuoozQqyYF3pEpEAgLNQfHqo9h215werT3BlbkFJTwrkg2UvBfkTqjfJE0SzPyC0C7lZEN9G4giikVSkg2Kco4s5J6TMH7sm0gJEkj6aC7LCAA',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -162,7 +163,20 @@ const DiagnosisChat = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-8"
           >
-            <MessageCircle className="w-16 h-16 mx-auto mb-6 text-sage-600" />
+            <div className="relative inline-block">
+              <MessageCircle className="w-16 h-16 mx-auto mb-6 text-sage-600" />
+              {/* 3D Medical Cross Element Behind Icon */}
+              <div className="absolute -inset-4 opacity-15">
+                <div className="relative w-12 h-12 mx-auto">
+                  <div className="absolute inset-0 transform rotate-12">
+                    <div className="w-full h-2 bg-gradient-to-r from-sage-400 to-sage-600 rounded-full transform translate-y-5 shadow-lg"></div>
+                    <div className="w-2 h-full bg-gradient-to-b from-sage-400 to-sage-600 rounded-full transform translate-x-5 shadow-lg"></div>
+                  </div>
+                  <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-sage-400 rounded-full animate-pulse"></div>
+                  <div className="absolute bottom-1 left-1 w-1 h-1 bg-spa-blue-400 rounded-full animate-pulse delay-300"></div>
+                </div>
+              </div>
+            </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 text-sage-800">
               AI Diagnosis Chat
             </h1>

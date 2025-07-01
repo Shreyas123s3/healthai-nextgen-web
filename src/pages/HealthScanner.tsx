@@ -26,6 +26,9 @@ const HealthScanner = () => {
         </motion.div>
       </div>
 
+      {/* Subtle background enhancement */}
+      <div className="fixed inset-0 z-5 bg-gradient-radial from-sage-50/30 via-transparent to-transparent pointer-events-none" />
+
       {/* Main Content */}
       <div className="relative z-10 premium-bg pt-20">
         {/* Back Button */}
@@ -47,7 +50,20 @@ const HealthScanner = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <Brain className="w-16 h-16 mx-auto mb-6 text-sage-600" />
+            <div className="relative inline-block">
+              <Brain className="w-16 h-16 mx-auto mb-6 text-sage-600" />
+              {/* 3D Medical Cross Element Behind Icon */}
+              <div className="absolute -inset-4 opacity-15">
+                <div className="relative w-12 h-12 mx-auto">
+                  <div className="absolute inset-0 transform rotate-12">
+                    <div className="w-full h-2 bg-gradient-to-r from-sage-400 to-sage-600 rounded-full transform translate-y-5 shadow-lg"></div>
+                    <div className="w-2 h-full bg-gradient-to-b from-sage-400 to-sage-600 rounded-full transform translate-x-5 shadow-lg"></div>
+                  </div>
+                  <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-sage-400 rounded-full animate-pulse"></div>
+                  <div className="absolute bottom-1 left-1 w-1 h-1 bg-spa-blue-400 rounded-full animate-pulse delay-300"></div>
+                </div>
+              </div>
+            </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 text-sage-800">
               Health Risk Scanner
             </h1>
@@ -59,7 +75,18 @@ const HealthScanner = () => {
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             <Card className="bg-white/80 backdrop-blur-sm border-white/30">
               <CardContent className="p-6 text-center">
-                <Activity className="w-12 h-12 mx-auto mb-4 text-sage-600" />
+                <div className="relative inline-block">
+                  <Activity className="w-12 h-12 mx-auto mb-4 text-sage-600" />
+                  {/* Small 3D Medical Cross Element */}
+                  <div className="absolute -inset-2 opacity-10">
+                    <div className="relative w-6 h-6 mx-auto">
+                      <div className="absolute inset-0 transform rotate-12">
+                        <div className="w-full h-1 bg-gradient-to-r from-sage-400 to-sage-600 rounded-full transform translate-y-2.5"></div>
+                        <div className="w-1 h-full bg-gradient-to-b from-sage-400 to-sage-600 rounded-full transform translate-x-2.5"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <h3 className="text-lg font-semibold mb-2">Vital Signs Analysis</h3>
                 <p className="text-warm-neutral-600">Real-time monitoring and analysis of your vital health metrics</p>
               </CardContent>
@@ -67,7 +94,18 @@ const HealthScanner = () => {
 
             <Card className="bg-white/80 backdrop-blur-sm border-white/30">
               <CardContent className="p-6 text-center">
-                <Brain className="w-12 h-12 mx-auto mb-4 text-sage-600" />
+                <div className="relative inline-block">
+                  <Brain className="w-12 h-12 mx-auto mb-4 text-sage-600" />
+                  {/* Small 3D Medical Cross Element */}
+                  <div className="absolute -inset-2 opacity-10">
+                    <div className="relative w-6 h-6 mx-auto">
+                      <div className="absolute inset-0 transform rotate-12">
+                        <div className="w-full h-1 bg-gradient-to-r from-sage-400 to-sage-600 rounded-full transform translate-y-2.5"></div>
+                        <div className="w-1 h-full bg-gradient-to-b from-sage-400 to-sage-600 rounded-full transform translate-x-2.5"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <h3 className="text-lg font-semibold mb-2">AI Risk Assessment</h3>
                 <p className="text-warm-neutral-600">Machine learning algorithms predict potential health risks</p>
               </CardContent>
@@ -75,7 +113,18 @@ const HealthScanner = () => {
 
             <Card className="bg-white/80 backdrop-blur-sm border-white/30">
               <CardContent className="p-6 text-center">
-                <TrendingUp className="w-12 h-12 mx-auto mb-4 text-sage-600" />
+                <div className="relative inline-block">
+                  <TrendingUp className="w-12 h-12 mx-auto mb-4 text-sage-600" />
+                  {/* Small 3D Medical Cross Element */}
+                  <div className="absolute -inset-2 opacity-10">
+                    <div className="relative w-6 h-6 mx-auto">
+                      <div className="absolute inset-0 transform rotate-12">
+                        <div className="w-full h-1 bg-gradient-to-r from-sage-400 to-sage-600 rounded-full transform translate-y-2.5"></div>
+                        <div className="w-1 h-full bg-gradient-to-b from-sage-400 to-sage-600 rounded-full transform translate-x-2.5"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <h3 className="text-lg font-semibold mb-2">Trend Analysis</h3>
                 <p className="text-warm-neutral-600">Track health patterns and improvements over time</p>
               </CardContent>

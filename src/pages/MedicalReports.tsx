@@ -57,6 +57,9 @@ const MedicalReports = () => {
         </motion.div>
       </div>
 
+      {/* Subtle background enhancement */}
+      <div className="fixed inset-0 z-5 bg-gradient-radial from-sage-50/30 via-transparent to-transparent pointer-events-none" />
+
       {/* Main Content */}
       <div className="relative z-10 premium-bg pt-20">
         {/* Back Button */}
@@ -78,7 +81,20 @@ const MedicalReports = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <FileText className="w-16 h-16 mx-auto mb-6 text-sage-600" />
+            <div className="relative inline-block">
+              <FileText className="w-16 h-16 mx-auto mb-6 text-sage-600" />
+              {/* 3D Medical Cross Element Behind Icon */}
+              <div className="absolute -inset-4 opacity-15">
+                <div className="relative w-12 h-12 mx-auto">
+                  <div className="absolute inset-0 transform rotate-12">
+                    <div className="w-full h-2 bg-gradient-to-r from-sage-400 to-sage-600 rounded-full transform translate-y-5 shadow-lg"></div>
+                    <div className="w-2 h-full bg-gradient-to-b from-sage-400 to-sage-600 rounded-full transform translate-x-5 shadow-lg"></div>
+                  </div>
+                  <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-sage-400 rounded-full animate-pulse"></div>
+                  <div className="absolute bottom-1 left-1 w-1 h-1 bg-spa-blue-400 rounded-full animate-pulse delay-300"></div>
+                </div>
+              </div>
+            </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 text-sage-800">
               Medical Reports
             </h1>
@@ -91,7 +107,18 @@ const MedicalReports = () => {
           <Card className="bg-white/80 backdrop-blur-sm border-white/30 mb-8">
             <CardContent className="p-8">
               <div className="border-2 border-dashed border-sage-300 rounded-lg p-8 text-center">
-                <Upload className="w-12 h-12 mx-auto mb-4 text-sage-400" />
+                <div className="relative inline-block">
+                  <Upload className="w-12 h-12 mx-auto mb-4 text-sage-400" />
+                  {/* 3D Medical Cross Element Behind Upload Icon */}
+                  <div className="absolute -inset-3 opacity-10">
+                    <div className="relative w-8 h-8 mx-auto">
+                      <div className="absolute inset-0 transform rotate-12">
+                        <div className="w-full h-1.5 bg-gradient-to-r from-sage-400 to-sage-600 rounded-full transform translate-y-3 shadow-lg"></div>
+                        <div className="w-1.5 h-full bg-gradient-to-b from-sage-400 to-sage-600 rounded-full transform translate-x-3 shadow-lg"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <h3 className="text-lg font-semibold mb-2 text-sage-800">Upload Medical Reports</h3>
                 <p className="text-warm-neutral-600 mb-4">
                   Drag and drop your files here, or click to browse
@@ -124,7 +151,18 @@ const MedicalReports = () => {
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-4 flex-1">
-                      <FileText className="w-8 h-8 text-sage-600 mt-1" />
+                      <div className="relative">
+                        <FileText className="w-8 h-8 text-sage-600 mt-1" />
+                        {/* Small 3D Medical Cross Element */}
+                        <div className="absolute -inset-1 opacity-10">
+                          <div className="relative w-4 h-4">
+                            <div className="absolute inset-0 transform rotate-12">
+                              <div className="w-full h-0.5 bg-gradient-to-r from-sage-400 to-sage-600 rounded-full transform translate-y-1.5"></div>
+                              <div className="w-0.5 h-full bg-gradient-to-b from-sage-400 to-sage-600 rounded-full transform translate-x-1.5"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       <div className="flex-1">
                         <h3 className="font-semibold text-sage-800 mb-1">{file.name}</h3>
                         <p className="text-sm text-warm-neutral-500 mb-2">
@@ -154,7 +192,18 @@ const MedicalReports = () => {
           {uploadedFiles.length === 0 && (
             <Card className="bg-white/80 backdrop-blur-sm border-white/30">
               <CardContent className="p-8 text-center">
-                <FileText className="w-12 h-12 mx-auto mb-4 text-sage-300" />
+                <div className="relative inline-block">
+                  <FileText className="w-12 h-12 mx-auto mb-4 text-sage-300" />
+                  {/* 3D Medical Cross Element Behind Empty State Icon */}
+                  <div className="absolute -inset-3 opacity-10">
+                    <div className="relative w-8 h-8 mx-auto">
+                      <div className="absolute inset-0 transform rotate-12">
+                        <div className="w-full h-1.5 bg-gradient-to-r from-sage-300 to-sage-500 rounded-full transform translate-y-3"></div>
+                        <div className="w-1.5 h-full bg-gradient-to-b from-sage-300 to-sage-500 rounded-full transform translate-x-3"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <p className="text-warm-neutral-500">No reports uploaded yet</p>
               </CardContent>
             </Card>
