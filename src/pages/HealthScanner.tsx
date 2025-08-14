@@ -1,13 +1,196 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Brain, Activity, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Brain, Activity, TrendingUp, Upload } from 'lucide-react';
 import { Tiles } from '@/components/ui/tiles';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { HealthScanProgress } from '@/components/ui/health-scan-progress';
+import { HealthScanResults } from '@/components/ui/health-scan-results';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 const HealthScanner = () => {
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanProgress, setScanProgress] = useState(0);
+  const [scanResults, setScanResults] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { toast } = useToast();
+
+  const handleFileSelect = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.jpg,.jpeg,.png,.pdf';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        setSelectedFile(file);
+        startHealthScan(file);
+      }
+    };
+    input.click();
+  };
+
+  const startHealthScan = async (file: File) => {
+    try {
+      setIsScanning(true);
+      setScanProgress(0);
+      setScanResults(null);
+
+      // Simulate progress updates
+      const progressInterval = setInterval(() => {
+        setScanProgress(prev => {
+          if (prev >= 95) {
+            clearInterval(progressInterval);
+            return 95;
+          }
+          return prev + Math.random() * 15;
+        });
+      }, 500);
+
+      // Upload file to Supabase storage
+      const fileName = `${Date.now()}_${file.name}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('health_scans')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      // Create initial database record
+      const { data: recordData, error: recordError } = await (supabase as any)
+        .from('health_scan_results')
+        .insert({
+          file_id: fileName,
+          status: 'processing',
+          risks_detected: [],
+          confidence_scores: [],
+          ai_summary: '',
+          recommendations: ''
+        })
+        .select()
+        .single();
+
+      if (recordError) throw recordError;
+
+      // Call edge function to process the scan
+      const { error: functionError } = await supabase.functions.invoke('process-health-scan', {
+        body: { file_id: fileName, file_path: fileName }
+      });
+
+      if (functionError) throw functionError;
+
+      // Subscribe to real-time updates
+      const subscription = supabase
+        .channel('health_scan_results')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'health_scan_results',
+            filter: `file_id=eq.${fileName}`
+          },
+          (payload) => {
+            if (payload.new.status === 'completed') {
+              clearInterval(progressInterval);
+              setScanProgress(100);
+              setTimeout(() => {
+                setIsScanning(false);
+                setScanResults(payload.new);
+              }, 1000);
+            }
+          }
+        )
+        .subscribe();
+
+      // Cleanup subscription after 5 minutes
+      setTimeout(() => {
+        subscription.unsubscribe();
+      }, 300000);
+
+    } catch (error) {
+      console.error('Error starting health scan:', error);
+      setIsScanning(false);
+      setScanProgress(0);
+      toast({
+        title: "Scan Failed",
+        description: "There was an error processing your health scan. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const downloadReport = async () => {
+    if (!scanResults) return;
+    
+    try {
+      // Generate PDF report using browser's print functionality
+      const reportWindow = window.open('', '_blank');
+      if (!reportWindow) return;
+
+      const reportContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Health Scan Report</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #4a7c59; padding-bottom: 20px; }
+            .section { margin-bottom: 25px; }
+            .risk-item { margin: 10px 0; padding: 10px; background: #f8f9fa; border-left: 4px solid #4a7c59; }
+            .confidence { font-weight: bold; color: #4a7c59; }
+            .disclaimer { background: #f0f0f0; padding: 15px; border-radius: 5px; font-size: 0.9em; margin-top: 30px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Health Scan Report</h1>
+            <p>Generated on ${new Date(scanResults.created_at).toLocaleDateString()}</p>
+          </div>
+          
+          <div class="section">
+            <h2>Detected Findings</h2>
+            ${scanResults.risks_detected.map((risk: string, index: number) => `
+              <div class="risk-item">
+                <strong>${risk}</strong>
+                <div class="confidence">Confidence: ${Math.round((scanResults.confidence_scores[index] || 0) * 100)}%</div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="section">
+            <h2>AI Analysis Summary</h2>
+            <p>${scanResults.ai_summary}</p>
+          </div>
+          
+          <div class="section">
+            <h2>Recommendations</h2>
+            <div>${scanResults.recommendations}</div>
+          </div>
+          
+          <div class="disclaimer">
+            <strong>Disclaimer:</strong> This AI analysis is for informational purposes only and should not replace professional medical consultation. Always consult with qualified healthcare providers for medical decisions.
+          </div>
+        </body>
+        </html>
+      `;
+
+      reportWindow.document.write(reportContent);
+      reportWindow.document.close();
+      setTimeout(() => {
+        reportWindow.print();
+      }, 500);
+    } catch (error) {
+      console.error('Error generating report:', error);
+      toast({
+        title: "Download Failed",
+        description: "There was an error generating your report. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen relative">
       {/* Fixed Tiles Background */}
@@ -131,24 +314,37 @@ const HealthScanner = () => {
             </Card>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-center"
-          >
-            <Button 
-              size="lg" 
-              className="bg-sage-600 hover:bg-sage-700 text-white px-8 py-4 text-lg"
+          {!scanResults ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-center"
             >
-              Start Health Scan
-            </Button>
-            <p className="text-sm text-warm-neutral-500 mt-4">
-              Scan takes 2-3 minutes • Results available instantly
-            </p>
-          </motion.div>
+              <Button 
+                onClick={handleFileSelect}
+                size="lg" 
+                className="bg-sage-600 hover:bg-sage-700 text-white px-8 py-4 text-lg"
+                disabled={isScanning}
+              >
+                <Upload className="w-5 h-5 mr-2" />
+                {isScanning ? 'Processing...' : 'Start Health Scan'}
+              </Button>
+              <p className="text-sm text-warm-neutral-500 mt-4">
+                Upload X-ray, medical report (JPG, PNG, PDF) • AI analysis in real-time
+              </p>
+            </motion.div>
+          ) : (
+            <HealthScanResults 
+              results={scanResults} 
+              onDownloadReport={downloadReport}
+            />
+          )}
         </div>
       </div>
+
+      {/* Health Scan Progress Modal */}
+      <HealthScanProgress isScanning={isScanning} progress={scanProgress} />
     </div>
   );
 };
