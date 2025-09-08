@@ -9,6 +9,7 @@ import { Navigation } from "@/components/ui/navigation";
 import Index from "./pages/Index";
 import HealthScanner from "./pages/HealthScanner";
 import DiagnosisChat from "./pages/DiagnosisChat";
+import TalkToAI from "./pages/TalkToAI";
 import MedicalReports from "./pages/MedicalReports";
 import NotFound from "./pages/NotFound";
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/health-scanner" element={<HealthScanner />} />
           <Route path="/diagnosis-chat" element={<DiagnosisChat />} />
+          <Route path="/talk-to-ai" element={<TalkToAI />} />
           <Route path="/medical-reports" element={<MedicalReports />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

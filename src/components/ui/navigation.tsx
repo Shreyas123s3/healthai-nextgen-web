@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, Brain, MessageCircle, Upload } from 'lucide-react';
+import { Home, Brain, MessageCircle, Upload, Mic } from 'lucide-react';
 
 export function Navigation() {
   const location = useLocation();
@@ -11,6 +11,7 @@ export function Navigation() {
     { path: '/', label: 'Home', icon: Home },
     { path: '/health-scanner', label: 'Health Risk Scanner', icon: Brain },
     { path: '/diagnosis-chat', label: 'Diagnosis Chat', icon: MessageCircle },
+    { path: '/talk-to-ai', label: 'Talk to AI', icon: Mic },
     { path: '/medical-reports', label: 'Medical Reports', icon: Upload },
   ];
 
