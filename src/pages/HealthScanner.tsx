@@ -16,7 +16,15 @@ const HealthScanner = () => {
   const [scanProgress, setScanProgress] = useState(0);
   const [scanResults, setScanResults] = useState<any>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [user, setUser] = useState<any>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Check if user is authenticated
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+  }, []);
 
   const handleFileSelect = () => {
     const input = document.createElement('input');
@@ -34,6 +42,16 @@ const HealthScanner = () => {
 
   const startHealthScan = async (file: File) => {
     try {
+      // Check if user is authenticated
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to use the Health Scanner feature.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       setIsScanning(true);
       setScanProgress(0);
       setScanResults(null);
@@ -50,35 +68,50 @@ const HealthScanner = () => {
       }, 500);
 
       // Upload file to Supabase storage
-      const fileName = `${Date.now()}_${file.name}`;
+      const fileName = `${user.id}/${Date.now()}_${file.name}`;
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('health_scans')
         .upload(fileName, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw new Error(`Upload failed: ${uploadError.message}`);
+      }
+
+      console.log('File uploaded successfully:', uploadData);
 
       // Create initial database record
       const { data: recordData, error: recordError } = await (supabase as any)
         .from('health_scan_results')
         .insert({
+          user_id: user.id,
           file_id: fileName,
+          file_path: fileName,
           status: 'processing',
           risks_detected: [],
-          confidence_scores: [],
-          ai_summary: '',
-          recommendations: ''
+          confidence_scores: []
         })
         .select()
         .single();
 
-      if (recordError) throw recordError;
+      if (recordError) {
+        console.error('Record creation error:', recordError);
+        throw new Error(`Failed to create record: ${recordError.message}`);
+      }
+
+      console.log('Database record created:', recordData);
 
       // Call edge function to process the scan
-      const { error: functionError } = await supabase.functions.invoke('process-health-scan', {
+      const { data: functionData, error: functionError } = await supabase.functions.invoke('process-health-scan', {
         body: { file_id: fileName, file_path: fileName }
       });
 
-      if (functionError) throw functionError;
+      if (functionError) {
+        console.error('Edge function error:', functionError);
+        throw new Error(`Analysis failed: ${functionError.message}`);
+      }
+
+      console.log('Edge function called successfully:', functionData);
 
       // Subscribe to real-time updates
       const subscription = supabase
@@ -109,13 +142,13 @@ const HealthScanner = () => {
         subscription.unsubscribe();
       }, 300000);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error starting health scan:', error);
       setIsScanning(false);
       setScanProgress(0);
       toast({
         title: "Scan Failed",
-        description: "There was an error processing your health scan. Please try again.",
+        description: error.message || "There was an error processing your health scan. Please try again.",
         variant: "destructive"
       });
     }
