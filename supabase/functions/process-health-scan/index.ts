@@ -9,7 +9,7 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const geminiApiKey = Deno.env.get('GEMINI_API_KEY')!;
+const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -35,61 +35,128 @@ serve(async (req) => {
     const arrayBuffer = await fileData.arrayBuffer();
     const fileExtension = file_path.toLowerCase().split('.').pop();
 
-    let analysisText = '';
     let risksDetected: string[] = [];
     let confidenceScores: number[] = [];
+    let aiSummary = '';
+    let recommendations = '';
 
-    // Determine file type and process accordingly
-    if (fileExtension === 'pdf') {
-      analysisText = 'PDF medical report detected. Advanced text extraction and analysis would be performed here.';
-      risksDetected = ['Document Analysis Pending'];
-      confidenceScores = [0.85];
-    } else if (['jpg', 'jpeg', 'png'].includes(fileExtension || '')) {
-      // Simulate X-ray or medical image analysis
-      analysisText = 'Medical image detected. Advanced imaging analysis would be performed here using TorchXRayVision and MONAI.';
-      risksDetected = ['Potential Anomaly Detected', 'Further Review Recommended'];
-      confidenceScores = [0.78, 0.82];
+    // Convert image to base64 for AI analysis
+    if (['jpg', 'jpeg', 'png', 'webp'].includes(fileExtension || '')) {
+      console.log('Processing X-ray image for AI analysis');
+      
+      // Convert to base64
+      const base64Image = btoa(
+        new Uint8Array(arrayBuffer)
+          .reduce((data, byte) => data + String.fromCharCode(byte), '')
+      );
+      const imageDataUrl = `data:image/${fileExtension};base64,${base64Image}`;
+
+      // Analyze X-ray with Lovable AI vision model
+      const analysisPrompt = `You are an expert medical imaging AI assistant specializing in X-ray analysis. Analyze this X-ray image carefully and provide:
+
+1. A list of any anomalies, abnormalities, or areas of concern detected
+2. For each finding, provide a confidence score (0-100%)
+3. A brief description of each finding
+4. Overall assessment of the X-ray
+
+Format your response as JSON with this structure:
+{
+  "findings": [
+    {"anomaly": "description", "confidence": 85, "details": "explanation"}
+  ],
+  "summary": "overall assessment"
+}
+
+IMPORTANT: This is for educational/screening purposes only. Always recommend consulting with a qualified radiologist or healthcare professional for definitive diagnosis.`;
+
+      const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${lovableApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            {
+              role: 'user',
+              content: [
+                { type: 'text', text: analysisPrompt },
+                { type: 'image_url', image_url: { url: imageDataUrl } }
+              ]
+            }
+          ],
+          max_tokens: 1000
+        })
+      });
+
+      if (!aiResponse.ok) {
+        const errorText = await aiResponse.text();
+        console.error('Lovable AI error:', aiResponse.status, errorText);
+        throw new Error(`AI analysis failed: ${errorText}`);
+      }
+
+      const aiData = await aiResponse.json();
+      const aiContent = aiData?.choices?.[0]?.message?.content || '';
+      
+      console.log('AI Response:', aiContent);
+
+      // Parse AI response
+      try {
+        // Extract JSON from the response (it might be wrapped in markdown code blocks)
+        const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsedResponse = JSON.parse(jsonMatch[0]);
+          
+          // Extract findings
+          if (parsedResponse.findings && Array.isArray(parsedResponse.findings)) {
+            risksDetected = parsedResponse.findings.map((f: any) => f.anomaly || f.description || 'Unspecified finding');
+            confidenceScores = parsedResponse.findings.map((f: any) => (f.confidence || 50) / 100);
+          }
+          
+          aiSummary = parsedResponse.summary || aiContent;
+        } else {
+          // Fallback if JSON parsing fails
+          aiSummary = aiContent;
+          risksDetected = ['AI analysis completed - review summary for details'];
+          confidenceScores = [0.75];
+        }
+      } catch (parseError) {
+        console.error('Failed to parse AI response:', parseError);
+        aiSummary = aiContent;
+        risksDetected = ['AI analysis completed - review summary for details'];
+        confidenceScores = [0.75];
+      }
+
+      // Generate recommendations based on analysis
+      const recResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${lovableApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            {
+              role: 'user',
+              content: `Based on this X-ray analysis: "${aiSummary}", provide 3-5 specific, actionable healthcare recommendations. Format as bullet points. Remember to emphasize the importance of consulting with a qualified healthcare professional.`
+            }
+          ],
+          max_tokens: 500
+        })
+      });
+
+      const recData = await recResponse.json();
+      recommendations = recData?.choices?.[0]?.message?.content || 'Please consult with a qualified radiologist or healthcare professional for a comprehensive evaluation and personalized recommendations.';
+
+    } else {
+      // Non-image files (PDFs, etc.)
+      aiSummary = 'Document uploaded successfully. Please note that detailed analysis of PDF documents requires additional processing.';
+      risksDetected = ['Document uploaded - manual review recommended'];
+      confidenceScores = [0.5];
+      recommendations = 'Please consult with a healthcare professional to review this document in detail.';
     }
-
-    // Analyze with Gemini API
-    const geminiPrompt = `As a medical AI assistant, analyze this health scan data: ${analysisText}. 
-    Detected risks: ${risksDetected.join(', ')}. 
-    Provide a professional medical summary and recommendations. Keep it concise and professional.`;
-
-    const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: geminiPrompt }]
-          }]
-        })
-      }
-    );
-
-    const geminiData = await geminiResponse.json();
-    const aiSummary = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || 'Analysis completed. Please consult with a healthcare professional for detailed interpretation.';
-
-    // Generate recommendations
-    const recommendationsPrompt = `Based on the health scan analysis: "${aiSummary}", provide 3-5 specific, actionable healthcare recommendations. Format as bullet points.`;
-    
-    const recResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: recommendationsPrompt }]
-          }]
-        })
-      }
-    );
-
-    const recData = await recResponse.json();
-    const recommendations = recData?.candidates?.[0]?.content?.parts?.[0]?.text || 'Consult with a healthcare professional for personalized recommendations.';
 
     // Update the database record
     const { error: updateError } = await supabase
